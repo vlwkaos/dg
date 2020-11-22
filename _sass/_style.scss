@@ -1,10 +1,16 @@
+@font-face {
+    font-family: 'RIDIBatang';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_twelve@1.0/RIDIBatang.woff') format('woff');
+    font-weight: normal;
+    font-style: normal;
+}
 $color-primary: hsl(0, 0%, 10%);
 $color-text: hsl(0, 0%, 20%);
 $color-subtext: hsl(0, 0%, 30%);
 $color-border: hsl(0, 0%, 85%);
 $color-box-background: mix($color-primary, white, 4%);
 $border-radius: 4px;
-$font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
+$font-family: RIDIBatang, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial,
   sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
 
 body {
@@ -117,6 +123,13 @@ nav {
     grid-template-columns: 3fr 1fr;
     grid-template-areas: "content side";
   }
+
+  .twitter-tweet {
+   align-self: center; 
+  }
+  iframe {
+    align-self: center;
+  }
 }
 
 .backlink-box {
@@ -126,9 +139,11 @@ nav {
 }
 
 code {
+  display: inline-block;
   background: #f5f5f5;
   padding: 0.1em 0.2em;
   border-radius: 4px;
+  max-width: 640px;
 }
 
 .invalid-link {

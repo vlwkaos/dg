@@ -5,17 +5,18 @@ id: home
 permalink: /
 ---
 
-# Welcome! 🌱
+# vlwkaos의 디지털 가든
 
-<p style="padding: 3em 1em; background: #f5f7ff; border-radius: 4px;">
-  Take a look at <span style="font-weight: bold">[[Your first note]]</span> to get started on your exploration.
-</p>
+안녕하세요! 🍕🙋‍♂️ 저의 디지털 가든에 오신것을 환영해요!
 
-This digital garden template is free, open-source, and [available on GitHub here](https://github.com/maximevaillancourt/digital-garden-jekyll-template).
+저는 [[컴퓨터]]와 신경과학 그리고 기술과 사람이 부딪히는 지점에 흥미를 느끼고요.
+특히 요즘은 기술 변화가 가져올 [윤리 문제](/tech_and_data_ethics){: .internal-link}에 관심이 많습니다.  
 
-The easiest way to get started is to read this [step-by-step guide explaining how to set this up from scratch](https://maximevaillancourt.com/blog/setting-up-your-own-digital-garden-with-jekyll). If you need any help, my [DMs are open on Twitter (@vaillancourtmax)](https://twitter.com/vaillancourtmax). Say hi! 👋
+그리고 대체로 [형이상학적, 철학적 주제](/general_anthropology_metaphysics){: .internal-link}를 좋아합니다.
 
-If this template helps you in any way, [consider buying me a coffee](https://ko-fi.com/maximevaillancourt)! ☕️
+제 글을 재밌게 읽어 주셨으면 좋겠네요!
+
+
 
 <style>
   .wrapper {

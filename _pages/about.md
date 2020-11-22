@@ -4,6 +4,5 @@ title: About
 permalink: /about
 ---
 
-*This is an about page.*
+빈 집
 
-Feel free to tell the world about what you love! 😍
