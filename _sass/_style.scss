@@ -118,17 +118,31 @@ nav {
   grid-template-areas:
     "content"
     "side";
-
+  word-break: break-word;
   @media (min-width: 700px) {
     grid-template-columns: 3fr 1fr;
     grid-template-areas: "content side";
   }
 
-  .twitter-tweet {
-   align-self: center; 
-  }
-  iframe {
-    align-self: center;
+  .embed-wrapper {
+      align-self: center;
+      overflow: hidden;
+      padding-top: 56.25%;
+      position: relative;
+    .twitter-tweet{
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+    }
+    &>iframe {
+      position: absolute;
+      top: 0;
+      left: 0;
+      border: 0;
+      width: 80vw;
+      height: 100%;
+    }
   }
 }
 
@@ -139,11 +153,11 @@ nav {
 }
 
 code {
-  display: inline-block;
+  white-space: pre-wrap;
   background: #f5f5f5;
   padding: 0.1em 0.2em;
   border-radius: 4px;
-  max-width: 640px;
+  max-width: 80vw;
 }
 
 .invalid-link {

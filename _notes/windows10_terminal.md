@@ -6,10 +6,7 @@ published: true
 
 ## 서론
 
-작금의 마이크로소프트(이하 마소)는 개발자와 친해지기 위해 꽤 많이 노력 중인 것 같다. VSCode, Fast, TypeScript 등등 개발에 도움되는 여러 오픈 소스 프로젝트를 운영하고 있기도 하고,  특히 리눅스 환경을 윈도우10에 가져오려는 야심찬 계획을 차근차근 실천해나가고 있기도 하다. 최근에는 리눅스 GUI 프로그램을 WSL에서 실행할 수 있도록 만드려는 것 같다.
-
-
-<blockquote class="twitter-tweet"><p lang="en" dir="ltr">Check out this sneak preview of our work on adding Linux GUI application support to WSL! <a href="https://t.co/lcx4WWwxTo">pic.twitter.com/lcx4WWwxTo</a></p>&mdash; Craig Loewen (@craigaloewen) <a href="https://twitter.com/craigaloewen/status/1308452901266751488?ref_src=twsrc%5Etfw">September 22, 2020</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script> 
+작금의 마이크로소프트(이하 마소)는 개발자와 친해지기 위해 꽤 많이 노력 중인 것 같다. VSCode, Fast, TypeScript 등등 개발에 도움되는 여러 오픈 소스 프로젝트를 운영하고 있기도 하고,  특히 리눅스 환경을 윈도우10에 가져오려는 야심찬 계획을 차근차근 실천해나가고 있기도 하다. 최근에는 [리눅스 GUI 프로그램을 WSL에서 실행](https://twitter.com/i/status/1308452901266751488)할 수 있도록 만드려는 것 같다.
 
 정말이지 WSL는 윈도우10에서 개발하는 많은 개발자의 등을 간지러운 곳을 제대로 긁어주고 있다 벅벅. 
 
@@ -23,8 +20,9 @@ published: true
 
 스크린샷에서 알 수 있다시피 윈도우즈 터미널을 이용하면 여러가지 커스터마이징이 가능하다! 이게 뭐가 중요하냐고 할 수도 있지만 게임을 할 때도 스킨이 있을 때 더 재미있다. >윈도우즈 터미널< 당장 설치하자. 정말이지 글로벌 대기업의 광고영상을 보고있자면… 가슴이 웅장해진다.
 
+<div class='embed-wrapper'>
 <iframe width="560" height="315" src="https://www.youtube.com/embed/8gw0rXPMMPE" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
-
+</div>
 
 이 글에서는 간단하게 Git 표시를 해주는 Powerline 테마까지만 설정해 볼 것이다.
 
