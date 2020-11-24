@@ -1,5 +1,5 @@
 ---
-title: "쓰레기는 누가 치울까?"
+title: "쓰레기는 누가 치울까"
 author: 'vlwkaos'
 description: '진짜 한번도 생각해본적 없다면'
 published: true
