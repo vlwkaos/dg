@@ -5,7 +5,7 @@ layout: default
   window.onload = () => {
     const side = document.getElementsByTagName('side')[0];
     window.onscroll = (e) => {
-      if (window.outerWidth >= 700) {
+      if (document.body.clientWidth >= 700) {
         const y = Math.min(document.getElementById('notes-entry-container').scrollHeight - side.clientHeight, window.scrollY);
         side.style.top = `${y}px`;
       } else {

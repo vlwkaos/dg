@@ -49,6 +49,10 @@ img {
   margin: 0 auto;
   max-height: 75vh;
   border-radius: $border-radius;
+  &+br+span {
+    font-size: 0.8em;
+    color: mix($color-text, white, 80%)
+  }
 }
 
 blockquote {
