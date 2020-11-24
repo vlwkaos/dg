@@ -22,7 +22,9 @@ published: true
 
 ## 현대 환경 운동의 시초
 
+<div class='embed-wrapper'>
 <iframe width="560" height="315" src="https://www.youtube-nocookie.com/embed/wupToqz1e2g" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+</div>
 
 창백한 푸른 점. 우리 지구
 

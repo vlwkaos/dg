@@ -15,7 +15,7 @@ published: true
 윈도우 10은 여러개의 가상데스크톱 기능을 지원한다. 이 기능은 윈도우 7을 쓰던 시절 맥OS의 가장 탐났던 기능 중 하나이다. 윈도우 키 + TAB을 누르면 마치 맥OS의 미션 컨트롤과 비슷한 화면이 나오면서 열려있는 모든 윈도우의 썸네일이 보여진다.
 
 <p align='center'>
-<img src='/assets/wind10tip1.png' width='640px'/>
+<img src='/assets/wind10tip1.png'/>
 <br><span>가상 데스크톱 타임라인</span></p>
 
 여기서 상단에 ‘새 데스크톱’을 누르면 데스크톱이 추가된다. 맥OS와 다른 점은 모든 모니터에 하나의 가상 데스크톱을 사용한다는 점이다. 맥OS는 이 부분을 설정에서 변경할 수 있다.
@@ -61,7 +61,7 @@ published: true
 [WindowGrid](http://windowgrid.net/) 는 정해진 열과 행개수에 맞춰 창을 띄울 수 있게 해주는 프로그램이다. 아래 공식 사이트의 GIF를 보면 이해가 갈 것이다.
 
 <p align='center'>
-<img src='https://miro.medium.com/max/480/0*8OxnAfavR7Xpt0bu.gif' width='640px'/>
+<img src='https://miro.medium.com/max/480/0*8OxnAfavR7Xpt0bu.gif' />
 <br><span>WindowGrid 웹사이트에서 가져온 시연 이미지</span></p>
 
 기본적인 사용법은 마우스 좌클릭(유지)으로 창을 원하는 곳에 위치하고 우클릭 한 번 하고나서 마우스를 이동하여 원하는 크기로 조절한다. 마지막으로 좌클릭 버튼을 뗄 때 창 크기가 설정된다.
@@ -71,7 +71,7 @@ published: true
 [Listary 6 Beta](https://discussion.listary.com/t/listary-6-beta/4615) 는 지금 무료로 이용할 수 있다. Listary를 이용하면 어디서든 검색을 통해 앱이나 파일을 열 수 있을 뿐만 아니라 특히 윈도우 탐색기에서 바로 검색이 가능해진다는 아주 큰 장점이 있다.
 
 <p align='center'>
-<img src='/assets/wind10tip2.png' width='640px'/>
+<img src='/assets/wind10tip2.png' />
 <br><span>탐색기에서 Listary</span></p>
 
 탐색기를 열고 키보드를 입력하면 자동으로 우측 하단에 Listary검색이 열려서 원하는 문서나 폴더에 훨신 빠르게 접근이 가능하다.
@@ -85,13 +85,13 @@ published: true
 우선 실제 마우스와 키보드가 연결된 컴퓨터를 실행 후 서버로 설정하고 Start를 누르면 된다.아래 이미지의 빨간 박스에 표시된 버튼을 통해 각 스크린의 위치등 설정을 할 수 있는데 세세한 설정은 불가능하다. 그리고 다른 컴퓨터에서는 아래 Client 에 체크 한 뒤 서버 컴퓨터의 IP를 입력하고 Start를 누르면 된다. Auto config 옵션은 내가 했을 때는 잘 안됐다.
 
 <p align='center'>
-<img src='/assets/win10tip3.png' width='640px'/>
+<img src='/assets/win10tip3.png' />
 <br><span>barrier GUI</span></p>
 
 그런데 베리어에는 한 가지 결함이 있다. 다중 모니터를 사용할 때, 예를 들어 모니터 두개를 가로, 세로로 연결했다면 가로 세로의 최대 너비와 높이가 되는 직사각형 기준으로 마우스 가장자리 인식이 된다. 그러니까 가로, 세로 모니터라면 가로 모니터 아래나 위쪽으로 가져가도 상단 하단으로 인식하지 않는다. 아래 이미지를 참조하면 이해가 갈 것이다.
 
 <p align='center'>
-<img src='/assets/wind10tip4.png' width='640px'/>
+<img src='/assets/wind10tip4.png' />
 <br><span>X친 곳은 가장자리 취급이 되지 않는다</span></p>
 
 하지만 이것 역시 조금 복잡하지만 오토핫키로 해결이 가능하다.
@@ -113,7 +113,7 @@ published: true
 [ShareX](https://getsharex.com/) 는 정말 없는 기능이 없는 이미지 캡쳐 툴이다. GIF/영상부터 이미지 annotation까지 모두 포함되어 있고 캡쳐 후 클립보드에 저장, imgur등 이미지 호스팅 서비스에 업로드, 워터마크 지정, 커맨드 실행, 인쇄 등등 컴퓨터의 거의 모든 기능을 후처리로 사용할 수 있다.
 
 <p align='center'>
-<img src='/assets/wind10tip5.png' width='640px'/>
+<img src='/assets/wind10tip5.png' />
 <br><span>ShareX의 수많은 기능</span></p>
 
 ---
@@ -123,7 +123,7 @@ published: true
 [Geek Uninstaller](https://geekuninstaller.com/) 포터블로 쓸 수 있고 쉽게 사용이 가능한 삭제 프로그램이다. 더 설명할게 딱히 없다.
 
 <p align='center'>
-<img src='/assets/wind10tip6.png' width='640px'/>
+<img src='/assets/wind10tip6.png' />
 <br><span>Geek Uninstaller 메인 화면</span></p>
 
 ---
