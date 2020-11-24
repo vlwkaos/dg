@@ -29,6 +29,9 @@
 
   #graph-wrapper {
     background: #fcfcfc;
+    border-style: solid;
+    border-width: 2px;
+    border-color: #8b88e6;
     border-radius: 4px;
     height: auto;
   }
@@ -161,16 +164,16 @@
 
     const graphWrapper = document.getElementById('graph-wrapper')
     const element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-    element.setAttribute("width", graphWrapper.getBoundingClientRect().width);
+    element.setAttribute("width", graphWrapper.clientWidth);
     element.setAttribute("height", window.innerHeight * 0.8);
     graphWrapper.appendChild(element);
 
     const reportWindowSize = () => {
-      element.setAttribute("width", window.innerWidth);
-      element.setAttribute("height", window.innerHeight);
+      element.setAttribute("width", graphWrapper.clientWidth);
+      element.setAttribute("height", window.innerHeight * 0.8);
     };
 
-    window.onresize = reportWindowSize;
+    window.addEventListener('resize', reportWindowSize);
 
     const svg = d3.select("svg");
     const width = Number(svg.attr("width"));
@@ -220,7 +223,7 @@
         .filter((_d, i, nodes) => d3.select(nodes[i]).attr("active"))
         .attr("r", (d) => zoomOrKeep(ACTIVE_RADIUS_FACTOR * nodeSize[d.id]));
 
-      document.getElementById("zoom").innerHTML = zoomLevel.toFixed(2);
+      // document.getElementById("zoom").innerHTML = zoomLevel.toFixed(2);
     };
 
     const ticked = () => {

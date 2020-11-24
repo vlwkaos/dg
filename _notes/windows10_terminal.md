@@ -92,9 +92,47 @@ clear
 
 나머지 배경, 테마 등의 설정은 [윈도우즈 터미널repo](https://github.com/microsoft/terminal)와 ColorTool를 참조!
 
-유용한 단축키 몇가지
+### 미세팁
+
+추가적으로 윈도우즈 터미널의 설정파일을 열어보면 알겠지만 아래로 가보면
+```
+    // Add custom keybindings to this array.
+    // To unbind a key combination from your defaults.json, set the command to "unbound".
+    // To learn more about keybindings, visit https://aka.ms/terminal-keybindings
+    "keybindings":
+    [
+        // Copy and paste are bound to Ctrl+Shift+C and Ctrl+Shift+V in your defaults.json.
+        // These two lines additionally bind them to Ctrl+C and Ctrl+V.
+        // To learn more about selection, visit https://aka.ms/terminal-selection
+        { "command": {"action": "copy", "singleLine": false }, "keys": "ctrl+c" },
+        { "command": "paste", "keys": "ctrl+v" },
+
+        // Press Ctrl+Shift+F to open the search box
+        { "command": "find", "keys": "ctrl+shift+f" },
+
+        // Press Alt+Shift+D to open a new pane.
+        // - "split": "auto" makes this pane open in the direction that provides the most surface area.
+        // - "splitMode": "duplicate" makes the new pane use the focused pane's profile.
+        // To learn more about panes, visit https://aka.ms/terminal-panes
+        { "command": { "action": "splitPane", "split": "auto", "splitMode": "duplicate" }, "keys": "alt+shift+d" },
+		// Unbind keys first from any other actions so that we can use
+		{ "command": "unbound", "keys": "ctrl+shift+ageup" },
+		{ "command": "unbound", "keys": "ctrl+shift+pagedown" },
+		{ "command": "unbound", "keys": "ctrl+shift+up" },
+		{ "command": "unbound", "keys": "ctrl+shift+down" },
+
+		{ "command": "scrollUpPage", "keys": "ctrl+shift+pageup" },
+		{ "command": "scrollDownPage", "keys": "ctrl+shift+pagedown" },
+		{ "command": "scrollUp", "keys": "ctrl+shift+up" },
+		{ "command": "scrollDown", "keys": "ctrl+shift+down" },
+	]
+```
+
+이런 내용이 있는데 (없으면 집어넣자) 아래 단축키다.
 
 - `ctrl + shift + ↑ / ↓` 터미널 스크롤
 - `shift + alt + - / =` 가로 분할 / 세로 분할
 - `alt + 방향키` 분할 화면 포커스 이동
 - `ctrl + shift + w` 분할 화면 닫기
+
+필요에 따라 더 편한 키로 바꾸면 된다.
