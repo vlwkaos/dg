@@ -1,32 +1,36 @@
 ---
-title: "실용 정보 윤리학"
+title: '가짜정보'
 author: 'vlwkaos'
-description: '실생활에서 써먹을 수 있는 윤리 기술 - 개요'
 published: true
 ---
 
-## Practical Data Ethics 개요
+## 강의편람
 
-정보 윤리학은 지금 당장 사회적 악영향을 끼치는 여러 분야를 포함해서 참으로 다양한 분야에 적용된다. "기술 윤리를 어떻게 가르쳐야 하나?"의 분석은 기술 윤리가 법, 정책, 사생활 보호, 철학, 정의, 인권, 환경, 시민의식, 로봇, 가짜정보, 노동, 디자인, 정보보호, 연구 윤리 등 정말 다양한 분야에 걸쳐 있다는 사실을 알려준다. 다양한 분야의 교수들이 기술 윤리를 가르치고 있으며 기술에 대한 비판과 문제의식을 심는 것을 공통된 목표로한다.
+[이 시트](https://docs.google.com/spreadsheets/d/1jWIrA8jHz5fYAW4h9CkUD8gKS5V98PDJDymRf8d9vKI/edit#gid=0)에는 여러 사람들이 모아논 250개가 넘는 기술 윤리 강의가 담겨있습니다. 그만큼 기술 윤리는 방대한 분야입니다. 여기서는 극히 일부만을 다룹니다. 제가 이 강의에서 설명할 내용은 제가 힙겹게 추려낸 내용의 일부일 뿐입니다. 수많은 사람들이 아래의 내용을 공부하고 연구하고 있습니다.
 
-이 강의에서는 실용적이고 급선무인 분야를 중심으로 기술 윤리를 다룰 것이다. 현재 진행형인 두 분야 (가짜정보 와 편견)를 통해 이 강의가 어떤 내용이 될 것인지 감을 잡고 동기부여를 할 것이다. 그 후 제 3강에서 정보 윤리학의 역사와 실용적 도구와 접근을 알아볼 것이다. 추가로 사생활과 감시체제, 실리콘 벨리의 생태(기업 분석, 벤쳐 과성장)와 알고리즘 식민지화를 공부할 것이다. 이 강의는 당신이 정보 윤리를 시작하는데 있어 시발점이 되어줄 것이다.
+---
 
-### 강의 목차
+# 1. 가짜정보
 
-1. 가짜정보
-2. 편견과 공정성 문제
-3. 윤리학의 역사와 실용적 도구
-4. 사생활 및 감시체제
-5. 기술의 현 생태
-6. 알고리즘 식민지화 그리고
+여성들의 악몽인 딥페이크(영상 합성 기술), 코로나 바이러스에 대한 거짓 정보(WHO에서는 이를 **인포데믹**이라 부릅니다), 거짓 정보가 2020년 미국 대선에 끼칠 영향력에 대한 공포, 다른 나라의 거대한 영향력에 대한 소식과 같은 **가짜정보**에 관련 소식이 뉴스에서 빈번히 들려옵니다. 이는 이것이 그만큼 시급한 문제이며, 정보 윤리 문제가 기술 [[디자인]], 나쁜 배우들(?), 심리학, 자본축적만을 위한 잘못된 의사결정 등등 여러 분야에 걸쳐있음을 알려줍니다.
 
-### 학습 목표
+[1 단원 비디오 강의](http://ethics.fast.ai/videos/?lesson=1)
 
-1. 정보의 오용의 영향(부당한 편견, 감시체제, 가짜 정보, 되먹임 회로 등)을 이해한다. 이런 영향을 주는 원인을 이해한다. 각기 다른 종류의 편견을 인지할 수 있다.
-2. 정보와 이를 이용하는 알고리즘이 어떻게 우리의 경제적, 공민의, 개인적 경험을 조작할 수 있는지 조사할 수 있는 능력을 기른다.
-3. 새로운 상황과 잠재적 제품을 분석하여 잠재적 악영향을 줄이는 법을 배운다.
-4. 사무실에서 활용할 수 있는 실용적인 윤리 기술을 보유한다.
+## 강의 요약
 
-### 참조
 
-https://ethics.fast.ai 의 내용을 대충 번역하고 있습니다.
+## 꼭 읽어보세요
+
+- Will Oremus (covering the work of Mike Caulfield), [The Simplest Way to Spot Coronavirus Misinformation on Social Media](https://onezero.medium.com/the-simplest-way-to-spot-coronavirus-misinformation-on-social-media-4b7995448071)
+- Guillaume Chaslot, [How Algorithms Can Learn to Discredit the Media](https://medium.com/@guillaumechaslot/how-algorithms-can-learn-to-discredit-the-media-d1360157c4fa)
+- Rachelle Hampton, [The Black Feminists Who Saw the Alt-Right Threat Coming](https://slate.com/technology/2019/04/black-feminists-alt-right-twitter-gamergate.html)
+- Renee DiResta, [Mediating Consent](https://www.ribbonfarm.com/2019/12/17/mediating-consent/)
+- Manuel Velasquez et al, [“What is ethics?”](https://www.scu.edu/ethics/ethics-resources/ethical-decision-making/what-is-ethics/)
+
+## 추가로 읽어볼 것
+
+- Gordon Pennycook et al, [Understanding and reducing the spread of misinformation online](https://psyarxiv.com/3n9u8/)
+
+## 코더를 위한 실습
+
+- Intro to Language Modeling & Text Generation: [video lecture](https://www.youtube.com/watch?v=PNNHaQUQqW8&list=PLtmWHNX-gukKocXQOkQjuVxglSDYWsSh9&index=12&t=0s) and [jupyter notebook](https://github.com/fastai/course-nlp/blob/master/5-nn-imdb.ipynb) (from fast.ai NLP course)

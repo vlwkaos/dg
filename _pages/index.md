@@ -14,8 +14,6 @@ permalink: /
 
 제 글을 재밌게 읽어 주셨으면 좋겠어요!
 
-
-
 <style>
   .wrapper {
     max-width: 46em;

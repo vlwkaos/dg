@@ -1,5 +1,5 @@
 ---
-title: 'Algorithms of Oppresion'
+title: 'Algorithms of Oppression'
 author: 'vlwkaos'
 description: '알고리즘이 가져다주는 차별 문제를 알아보자'
 tags: [ethics, technology]
