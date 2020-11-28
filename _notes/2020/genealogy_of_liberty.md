@@ -1,5 +1,6 @@
 ---
 title: "자유의 계보"
+excerpt: "자유가 무엇인지 뭔지 알아보자"
 image: "/assets/liberty1.png"
 published: true
 ---

@@ -1,7 +1,7 @@
 ---
 title: "쓰레기는 누가 치울까"
 author: 'vlwkaos'
-description: '진짜 한번도 생각해본적 없다면'
+excerpt: '이 많은 쓰레기가 다 어디로 가는지 한번도 생각해본적 없다면'
 published: true
 ---
 

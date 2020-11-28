@@ -1,7 +1,7 @@
 ---
 title: "디자인"
 author: 'vlwkaos'
-description: '사람들에게 무엇을 주어야 하는가'
+excerpt: '사람들에게 무엇을? 어떻게?'
 published: true
 ---
 

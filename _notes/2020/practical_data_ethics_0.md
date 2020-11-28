@@ -1,7 +1,7 @@
 ---
 title: "실용 정보 윤리학"
 author: 'vlwkaos'
-description: '실생활에서 써먹을 수 있는 윤리 기술 - 개요'
+excerpt: '바로 적용 가능한 윤리 강의  - 개요'
 published: true
 ---
 
