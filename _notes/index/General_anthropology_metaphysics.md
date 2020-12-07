@@ -1,5 +1,5 @@
 ---
-title: '인류학? 형이상학?'
+title: '나의 개똥철학'
 author: 'vlwkaos'
 published: true
 ---
