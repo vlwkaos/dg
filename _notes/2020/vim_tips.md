@@ -1,10 +1,10 @@
 ---
-title: 'Vim 사용법'
+title: 'Vim'
 author: 'vlwkaos'
 published: true
 ---
 
-Vim 설정하면서 알게된 내용을 모아봤다.
+## Vim 설정 이것저것
 
 - `:s` 문자열 교체에 변수를 사용하는 방법
 

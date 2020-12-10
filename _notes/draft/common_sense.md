@@ -1,7 +1,7 @@
 ---
 title: "직감"
 author: 'mk'
-published: true
+published: false
 ---
 
 > 아직 작성 중인 글입니다.

@@ -1,7 +1,7 @@
 ---
 title: "인공지능에 관한 여러 사건"
 author: 'vlwkaos'
-published: true
+published: false
 ---
 
 > 아직 작성 중인 글입니다.

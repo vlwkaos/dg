@@ -7,12 +7,9 @@ permalink: /
 
 # vlwkaos의 디지털 가든
 
-안녕하세요! 🍕🙋‍♂️ 저의 디지털 가든에 오신것을 환영합니다!
+🍕🙋‍♂️ vlwkaos의 디지털 가든입니다.
 
-저는 [[컴퓨터]]와 관련된 거의 모든 것, 신경과학, 심리학, 건강, 기술 변화가 가져올 [윤리 문제](/index/tech_and_data_ethics){: .internal-link},  
-[형이상학적, 철학적 주제](/index/general_anthropology_metaphysics){: .internal-link}에 관심이 많습니다. 🐱‍🏍
-
-제 글을 재밌게 읽어 주셨으면 좋겠어요!
+주로 [[컴퓨터 과학]], [[심리학]], 건강, [[기술 윤리]], [[형이상학, 철학]]에 관한 글을 다룹니다. 🐱‍🏍
 
 <style>
   .wrapper {
