@@ -1,5 +1,5 @@
 ---
-title: '컴퓨터 과학'
+title: '컴퓨터'
 author: 'vlwkaos'
 published: true
 ---
