@@ -9,11 +9,13 @@ published: true
 ### Git
 
 - [[Git 효율적으로 사용하기]]
-- [[Git 히스토리 관해]]
+- [[Git 히스토리]]
 
-### 도구
+### Web dev
 
 - [[Neovim Typescript 환경 설정]]
+- [[순환 참조 해결하기]]
+- 
 
 ### Windows 10
 

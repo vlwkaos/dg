@@ -4,14 +4,14 @@ layout: default
 <script>
   window.onload = () => {
     const side = document.getElementsByTagName('side')[0];
-    window.onscroll = (e) => {
-      if (document.body.clientWidth >= 700) {
-        const y = Math.min(document.getElementById('notes-entry-container').scrollHeight - side.clientHeight, window.scrollY);
-        side.style.top = `${y}px`;
-      } else {
-        side.style.top = '0px';
-      }
-    }
+    const observer = new IntersectionObserver((entries) => {
+      const ratio = entries[0].intersectionRatio;
+      const boundingRect = entries[0].boundingClientRect;
+      const intersectionRect = entries[0].intersectionRect;
+    }, {
+      root: document.getElementById('notes-entry-container')
+    });
+    observer.observe(side)
   }
 </script>
 <article>
@@ -28,7 +28,7 @@ layout: default
       {{ content }}
     </content>
 
-    <side style="font-size: 0.9em; position:relative;align-self: baseline; transition: 0.1s">
+    <side style="font-size: 0.9em; position:sticky;align-self: baseline; transition: 0.5s; top: 0px;">
       <h3 style="margin-bottom: 1em">이 글을 참조하는 글</h3>
       {% if page.backlinks.size > 0 %}
       <div style="display: grid; grid-gap: 1em; grid-template-columns: repeat(1fr);">
