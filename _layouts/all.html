@@ -6,7 +6,7 @@
     <nav>{% include nav.html %}</nav>
     <div class="wrapper">
         <main>
-            <h2>전체 글 조회</h2>
+            <h2>전체 글 조회 (업데이트 순)</h2>
             {% assign timeframe = 604800 %}
             {% assign sorted_notes = site.notes | sort: "last_modified_at" %}
             <ul>

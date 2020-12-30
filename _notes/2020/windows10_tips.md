@@ -1,5 +1,5 @@
 ---
-title: '윈도우10 제대로 활용하기'
+title: '윈도우10 팁 및 유용한 앱'
 author: 'vlwkaos'
 published: true
 ---
