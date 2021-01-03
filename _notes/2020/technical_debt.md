@@ -1,7 +1,7 @@
 ---
 title: '기술 부채'
 author: 'vlwkaos'
-excerpt: '기술 부채 = 프로젝트 이해도'
+excerpt: '기술 부채 = 낮은 프로젝트 이해도'
 published: true
 ---
 

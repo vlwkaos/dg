@@ -1,6 +1,7 @@
 ---
 title: 'Vim'
 author: 'vlwkaos'
+excerpt: 'Vim 사용에 관한 모든 것'
 published: true
 ---
 

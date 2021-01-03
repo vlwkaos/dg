@@ -1,7 +1,7 @@
 ---
 title: "실용 정보 윤리학"
 author: 'vlwkaos'
-excerpt: '바로 적용 가능한 윤리 강의  - 개요'
+excerpt: '현재 우리에게 필요한 윤리 강의 - 개요'
 published: true
 ---
 
