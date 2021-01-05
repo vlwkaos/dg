@@ -4,7 +4,7 @@ author: 'vlwkaos'
 published: false
 ---
 
-구조가 없는 코드 베이스는 반면교사로 삼기에 참 적절하다. 프로젝트가 어떻게 개발되어왔는지 눈에 훤히 보이기 때문이다. 여기서 중요한 점은 개개인의 역량보다 팀의 성격이라고 생각한다. ... (작성중)
+프로젝트가 커질 수록 코드 아키텍쳐의 중요성도 커진다. 다만 좋은 코드를 유지하는 것도 비용이기 때문에 모든 경우에 답이될 수 없다.
 
 - poor abstraction에 관하여
     https://sandimetz.com/blog/2016/1/20/the-wrong-abstraction
