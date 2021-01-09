@@ -1,7 +1,7 @@
 ---
 title: '정리되지 않은 코드'
 author: 'vlwkaos'
-published: false
+published: true
 ---
 
 프로젝트가 커질 수록 코드 아키텍쳐의 중요성도 커진다. 다만 좋은 코드를 유지하는 것도 비용이기 때문에 모든 경우에 답이될 수 없다.
