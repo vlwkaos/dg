@@ -1,0 +1,793 @@
+<!DOCTYPE html>
+<html lang="en">
+{% include head.html %}
+
+<body style="background-color: black;">
+    <nav style="position: absolute; color:antiquewhite !important;">{% include nav.html %}</nav>
+    <canvas id="c" width=480 height=640
+        style="border:30px solid black; display:block;position:absolute; left:50%; transform:translateX(-50%);"></canvas>
+</body>
+<script>
+    ////////////////////////////////////////////////////
+    // Ver: 1.2.2
+    // 2018-12-03
+    ////////////////////////////////////////////////////
+    let c = document.querySelector('canvas')
+    let cv = c.getContext('2d')
+
+
+    //
+    let blocksize
+    let gamewidth
+    let gameheight
+
+    let nextBlockMarginX
+    let nextBlockMarginY
+    let normalMargin
+    //------------------------
+    class BlockChunk {
+        // 0  1  2  3  4  5 6 
+        // ????? ??? Z S
+        constructor() {
+            this.blocks = []
+            for (let i = 0; i < 4; i++) {
+                this.blocks.push(new Block())
+            }
+        }
+
+        reset(type) {
+            this.dir = 0
+            this.type = type
+            this.x = Math.floor(gamewidth / 2)
+            this.y = blocksize * -2
+            for (let i = 0; i < 4; i++) {
+                this.blocks[i].setColorByType(this.type)
+            }
+
+            this.setShape()
+        }
+
+        cloneTo(clone) {
+            clone.x = this.x
+            clone.y = this.y
+            clone.dir = this.dir
+            clone.type = this.type
+            clone.setShape()
+        }
+
+        setPos(x, y) {
+            this.x = x
+            this.y = y
+        }
+
+        setShape() {
+            if (this.type <= 3) {
+                if (this.dir % 2 == 0) {
+                    this.blocks[0].setPos(this.x - blocksize, this.y)
+                    this.blocks[1].setPos(this.x, this.y)
+                    this.blocks[2].setPos(this.x + blocksize, this.y)
+                } else {
+                    this.blocks[0].setPos(this.x, this.y - blocksize)
+                    this.blocks[1].setPos(this.x, this.y)
+                    this.blocks[2].setPos(this.x, this.y + blocksize)
+                }
+
+                if (this.type == 0) {//??
+                    switch (this.dir) {
+                        case 0: this.blocks[3].setPos(this.x - blocksize, this.y - blocksize); break;
+                        case 1: this.blocks[3].setPos(this.x + blocksize, this.y - blocksize); break;
+                        case 2: this.blocks[3].setPos(this.x + blocksize, this.y + blocksize); break;
+                        case 3: this.blocks[3].setPos(this.x - blocksize, this.y + blocksize); break;
+                    }
+                } else if (this.type == 1) { // 
+                    switch (this.dir) {
+                        case 0: this.blocks[3].setPos(this.x + blocksize, this.y - blocksize); break;
+                        case 1: this.blocks[3].setPos(this.x + blocksize, this.y + blocksize); break;
+                        case 2: this.blocks[3].setPos(this.x - blocksize, this.y + blocksize); break;
+                        case 3: this.blocks[3].setPos(this.x - blocksize, this.y - blocksize); break;
+                    }
+                } else if (this.type == 2) { // ?
+                    switch (this.dir) {
+                        case 0: this.blocks[3].setPos(this.x, this.y - blocksize); break;
+                        case 1: this.blocks[3].setPos(this.x + blocksize, this.y); break;
+                        case 2: this.blocks[3].setPos(this.x, this.y + blocksize); break;
+                        case 3: this.blocks[3].setPos(this.x - blocksize, this.y); break;
+                    }
+                } else if (this.type == 3) { // ??
+                    if (this.dir % 2 == 0) {
+                        this.blocks[3].setPos(this.x + blocksize * 2, this.y)
+                    } else {
+                        this.blocks[3].setPos(this.x, this.y + blocksize * 2)
+                    }
+                }
+                // endif (this.type<=3)
+            } else if (this.type == 4) { // ?
+                this.blocks[0].setPos(this.x, this.y)
+                this.blocks[1].setPos(this.x + blocksize, this.y)
+                this.blocks[2].setPos(this.x, this.y + blocksize)
+                this.blocks[3].setPos(this.x + blocksize, this.y + blocksize)
+            } else if (this.type == 5) {
+                this.blocks[0].setPos(this.x, this.y)
+                this.blocks[1].setPos(this.x, this.y + blocksize)
+                if (this.dir % 2 == 0) {
+                    this.blocks[2].setPos(this.x - blocksize, this.y)
+                    this.blocks[3].setPos(this.x + blocksize, this.y + blocksize)
+                } else {
+                    this.blocks[2].setPos(this.x + blocksize, this.y - blocksize)
+                    this.blocks[3].setPos(this.x + blocksize, this.y)
+                }
+            } else if (this.type == 6) {
+                this.blocks[0].setPos(this.x, this.y)
+                this.blocks[1].setPos(this.x, this.y + blocksize)
+                if (this.dir % 2 == 0) {
+                    this.blocks[2].setPos(this.x + blocksize, this.y)
+                    this.blocks[3].setPos(this.x - blocksize, this.y + blocksize)
+                } else {
+                    this.blocks[2].setPos(this.x - blocksize, this.y - blocksize)
+                    this.blocks[3].setPos(this.x - blocksize, this.y)
+
+                }
+            }
+        } //endsetShape
+
+        renderWIthCull() {
+            for (let i = 0; i < this.blocks.length; i++)
+                this.blocks[i].renderWithCull()
+        }
+
+        specialRender() {
+            for (let i = 0; i < this.blocks.length; i++) {
+                this.blocks[i].setAlpha((gameheight / (1 + Math.floor(level / 10)) - this.blocks[i].y) / (gameheight / (1 + Math.floor(level / 10))))
+                this.blocks[i].render()
+            }
+        }
+
+        render() {
+            for (let i = 0; i < this.blocks.length; i++)
+                this.blocks[i].render()
+        }
+
+        moveLeft(isLeft) {
+            if (isLeft)
+                this.x -= blocksize
+            else
+                this.x += blocksize
+        }
+
+        rotateLeft(isLeft) {
+            if (isLeft) {
+                if (this.dir == 0)
+                    this.dir = 3
+                else
+                    this.dir--
+            } else {
+                this.dir++
+                this.dir %= 4
+            }
+        }
+    }
+
+    class Block {
+
+        constructor() {
+            this.color = 'rgba(200,200,200,1)'
+            this.alpha = 1
+        }
+
+
+        cloneTo(block) {
+            block.x = this.x
+            block.y = this.y
+            block.color = this.color
+            block.alpha = 1
+            block.setColorByType(this.type)
+        }
+
+        setPos(x, y) {
+            this.x = x
+            this.y = y
+        }
+
+        setAlpha(alpha) {
+            this.alpha = alpha
+        }
+        setColorByType(type) {
+            this.type = type
+            switch (type) {
+                case 0: this.color = `rgba(250,100,0,${this.alpha})`; break;
+                case 1: this.color = `rgba(0,0,250,${this.alpha})`; break;
+                case 2: this.color = `rgba(200,50,200,${this.alpha})`; break;
+                case 3: this.color = `rgba(0,150,250,${this.alpha})`; break;
+                case 4: this.color = `rgba(230, 230,30,${this.alpha})`; break;
+                case 5: this.color = `rgba(50,240,50,${this.alpha})`; break;
+                case 6: this.color = `rgba(240,50,50,${this.alpha})`; break;
+                default: this.color = 'rgba(200,200,200,1)'; break;
+            }
+        }
+        render() {
+            cv.fillStyle = `rgba(250,250,250,${this.alpha})`
+            cv.fillRect(this.x, this.y, blocksize, blocksize)
+
+
+            //set color
+            this.setColorByType(this.type)
+            cv.fillStyle = this.color
+            cv.fillRect(this.x + 2, this.y + 2, blocksize - 2, blocksize - 2)
+        }
+
+        renderWithCull() {
+            if (this.x >= 0 && this.y >= 0 && this.x < gamewidth && this.y < gameheight) { // cull
+                cv.fillStyle = 'rgb(250,250,250)'
+                cv.fillRect(this.x, this.y, blocksize, blocksize)
+
+
+                //set color
+                cv.fillStyle = this.color
+                cv.fillRect(this.x + 2, this.y + 2, blocksize - 2, blocksize - 2)
+            }
+        }
+    }
+
+
+    //------------------------
+    let ctrl_chunk
+    let col_chunk
+    let nextChunk
+
+    let chunktable = [] //
+    let boundary = [] // fill with boundary blocks
+    let lineCheck = []
+    let spacePressed = false
+    let pause = false
+    let gameover = false
+
+    let IllIlI;
+    let b3st;
+
+    window.onkeydown = (e) => {
+        if (!gameover) {
+            if (e.keyCode == 37) {
+                if (checkMovable(true)) {
+                    ctrl_chunk.moveLeft(true)
+                }
+            } else if (e.keyCode == 39) {
+                if (checkMovable(false))
+                    ctrl_chunk.moveLeft(false)
+            } else if (e.keyCode == 38) {
+                //rotate right
+                if (checkRotatable(false))
+                    ctrl_chunk.rotateLeft(false)
+
+            } else if (e.keyCode == 40) {
+                downMoveTimer = timerConstant / 10
+            } else if (e.keyCode == 90) {
+
+            } else if (e.keyCode == 88) {
+
+            } else if (e.keyCode == 32) { // space
+                if (!spacePressed) {
+                    downMoveTimer = 1
+                    spacePressed = true
+                }
+            } else if (e.keyCode == 27) { // esc
+                if (pause) {
+                    pause = false
+                    c.style.setProperty("display", "block")
+
+                } else {
+                    pause = true
+                    c.style.setProperty("display", "none")
+                }
+            }
+            //console.log(e.keyCode)
+        } else {
+            if (e.keyCode == 32) {
+                //reset		
+                resetGame()
+
+            }
+
+        }
+    }
+    window.onkeyup = (e) => {
+        if (!gameover && !pause) {
+            if (e.keyCode == 40)
+                downMoveTimer = timerConstant
+            else if (e.keyCode == 32) {
+                downMoveTimer = timerConstant
+                spacePressed = false
+            }
+        }
+    }
+
+    let nextType;
+    let nextTypeArr;
+    let level;
+    let body
+    //start
+
+
+    window.onload = () => {
+
+
+        ctrl_chunk = new BlockChunk()
+        col_chunk = new BlockChunk()
+        nextChunk = new BlockChunk()
+        /*
+        c = document.createElement('canvas')
+        c.width = 480
+        c.height = 640
+        c.style.position = 'absolute'
+        c.style.left = 0
+        c.style.top = 0
+        c.style.border = '30px solid black'
+        body = document.querySelector('body')
+        ifr = document.querySelector('iframe')
+        //body.removeChild(document.querySelector('div'))
+        //body.removeChild(document.querySelector('div'))
+        //body.removeChild(document.querySelector('ul'))
+        body.prepend(c)
+        */
+
+        //
+        blocksize = c.width / 15
+        gamewidth = blocksize * 10
+        gameheight = c.height
+
+        nextBlockMarginX = gamewidth + 50
+        nextBlockMarginY = 90
+        normalMargin = 20
+
+
+
+
+        for (let i = 0; i < gameheight / blocksize; i++) {
+            lineCheck.push(0)
+        }
+
+        b3st = localStorage.getItem('tet-best') || 0
+
+        /*
+        chrome.storage.local.get(['best'],(items)=>{
+            if (items.best != undefined){
+                b3st = items.best
+                console.log(items)
+            }
+        });
+        */
+
+        parseInt(b3st)
+        //start
+        resetGame()
+
+        //requestAnimationFrame(refresh);
+        setInterval(refresh, d)
+    }
+
+    const d = 5
+
+    //---------- Render Loops----------------------
+
+
+    const refresh = () => {
+        if (!gameover && !pause)
+            update()
+        render()
+
+        //requestAnimationFrame(refresh);
+    }
+
+
+    let timeStamp = 0
+    let downMoveCounter = 0
+    let difficultyTimer = 25000
+
+    let timerConstant = 800
+    let downMoveTimer = timerConstant
+
+
+    const update = () => {
+        //counters
+        timeStamp += d
+        downMoveCounter += d
+
+        ctrl_chunk.setShape()
+        ctrl_chunk.cloneTo(col_chunk)
+        col_chunk.setShape()
+
+
+        if (downMoveCounter > downMoveTimer) {
+            if (!checkBottomHit()) {
+                downMoveTimer = timerConstant
+                moveToChunkTable()
+
+                //respawn
+                ctrl_chunk.reset(nextType)
+                if (typeIdx == nextTypeArr.length - 1) {
+                    typeIdx = 0
+                    nextTypeArr = getNextSeven()
+                } else {
+                    typeIdx++
+                }
+                nextType = nextTypeArr[typeIdx]
+                showNextBlocks()
+                checkLine()
+            } else
+                ctrl_chunk.y += blocksize
+            downMoveCounter = 0
+        }
+
+        //Check Gameover
+        if (checkGameOver()) {
+            gameOver()
+        }
+
+        //Up the difficulty
+        if (difficultyTimer > 0) {
+            difficultyTimer -= d
+
+
+        } else {
+            if (level < 20) {
+                difficultyTimer = 25000
+                level++
+                setDifficulty(level)
+            }
+        }
+
+    }
+
+    const render = () => {
+        shake()
+
+        spacePressed ? cv.fillStyle = 'rgba(0,0,0,0.3)' : cv.fillStyle = 'rgba(0,0,0,1)'
+
+        cv.fillRect(0, 0, c.width, c.height)
+
+
+        level > 14 ? ctrl_chunk.specialRender() : ctrl_chunk.render()
+
+
+        for (let i = 0; i < chunktable.length; i++) {
+            chunktable[i].render()
+        }
+        for (let i = 0; i < boundary.length; i++) {
+            boundary[i].renderWithCull()
+        }
+        nextChunk.render()
+
+        renderUI()
+    }
+
+
+
+
+    let comboTimer = 0
+
+    const renderUI = () => {
+
+        cv.fillStyle = 'rgba(250,250,250,1)'
+        cv.strokeStyle = 'rgba(255,255,255,1)'
+
+        cv.strokeRect(0, 0, gamewidth, c.height)
+
+        cv.font = "16px Arial"
+        cv.fillText('Next', gamewidth + 10, 30)
+        cv.strokeRect(gamewidth + 10, 40, blocksize * 4.5, blocksize * 4.5)
+
+
+        cv.fillText('Lv', gamewidth + 10, 250)
+        cv.fillText(level + "/20", gamewidth + 10, 270)
+
+        if (difficultyTimer < 5000)
+            cv.fillStyle = `rgb(250,${Math.floor(difficultyTimer / 20)},0)`
+        cv.fillText((difficultyTimer / 1000).toFixed(1), gamewidth + 50, 250)
+
+        cv.fillStyle = 'rgb(250,250,250)'
+        cv.fillText('Best', gamewidth + 10, 300)
+        cv.fillText(fillZeroStr(b3st.toString()), gamewidth + 10, 320)
+
+        cv.fillText('Score', gamewidth + 10, 350)
+        cv.fillText(fillZeroStr(IllIlI.toString()), gamewidth + 10, 370)
+
+        let exPos = 500
+        cv.fillText('Keys:', gamewidth + 10, exPos)
+        cv.fillText('이동: ← ↓ → SPACE', gamewidth + 10, exPos + 20)
+        cv.fillText('회전: ↑ ', gamewidth + 10, exPos + 40)
+        cv.fillText('일시정지: ESC', gamewidth + 10, exPos + 60)
+
+        exPos = 620
+        cv.fillText('Ver 1.2.2', gamewidth + 95, exPos)
+
+        cv.font = "24px Arial"
+        cv.fillStyle = 'rgb(250,0,0)'
+        if (gameover) {
+            cv.fillText('GAME OVER', gamewidth / 2 - 9 * 6, gameheight / 2)
+        } else if (pause) {
+            cv.fillText('PAUSE', gamewidth / 2 - 5 * 6, gameheight / 2)
+        }
+
+        if (comboTimer > 0) {
+            cv.fillStyle = 'rgb(255,255,0)'
+            cv.fillText('Combo ' + combo + "!!!", gamewidth / 2 - 52, gameheight / 2 - 100)
+            comboTimer -= 10
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////
+    // Collision
+    ////////////////////////////////////////////////////////
+    const isCollision = (sbj, obj) => {
+        return (sbj.x == obj.x && sbj.y == obj.y)
+    }
+
+    const checkMovable = (toLeft) => {
+        ctrl_chunk.cloneTo(col_chunk)
+        col_chunk.moveLeft(toLeft)
+        col_chunk.setShape()
+
+        return phantomCheckCollision()
+
+    }
+
+    const checkRotatable = (toLeft) => {
+        ctrl_chunk.cloneTo(col_chunk)
+        col_chunk.rotateLeft(toLeft)
+        col_chunk.setShape()
+        //
+        return phantomCheckCollision()
+    }
+
+    const checkBottomHit = () => {
+        ctrl_chunk.cloneTo(col_chunk)
+        col_chunk.y += blocksize
+        col_chunk.setShape()
+
+        return phantomCheckCollision()
+    }
+
+    const phantomCheckCollision = () => {
+        //check with other blocks
+        for (let i = 0; i < chunktable.length; i++) {
+            for (let k = 0; k < col_chunk.blocks.length; k++) {
+                if (isCollision(col_chunk.blocks[k], chunktable[i])) {
+                    return false
+                }
+            }
+        }
+
+        //check with boundary
+        for (let i = 0; i < boundary.length; i++) {
+            for (let j = 0; j < col_chunk.blocks.length; j++) {
+                if (isCollision(col_chunk.blocks[j], boundary[i])) {
+                    return false
+                }
+            }
+        }
+
+        return true
+    }
+
+    const moveToChunkTable = () => {
+        for (let i = 0; i < ctrl_chunk.blocks.length; i++) {
+            let newblock = new Block()
+            ctrl_chunk.blocks[i].cloneTo(newblock)
+            chunktable.push(newblock)
+        }
+    }
+
+    let combo = 0;
+    let scored;
+
+    const checkLine = () => {
+        for (let i = 0; i < lineCheck.length; i++) {
+            lineCheck[i] = 0
+        }
+
+        for (let i = 0; i < chunktable.length; i++) {
+            lineCheck[chunktable[i].y / blocksize]++
+        }
+        processHit()
+    }
+
+    const processHit = () => {
+        //count 10
+        scored = 0
+        for (let i = 0; i < lineCheck.length; i++) {
+
+            if (lineCheck[i] == 10 && i - 1 >= 0) { // SCORE
+                scored++
+
+                lineCheck[i] = lineCheck[i - 1]
+                for (let j = 0; j < chunktable.length; j++) {
+                    if (chunktable[j].y == i * blocksize) {
+                        chunktable.splice(j, 1)
+                        j--
+                    } else if (chunktable[j].y < i * blocksize) {
+                        chunktable[j].y += blocksize
+                    }
+                }
+            }
+
+        }
+
+
+        //Score Logic
+        if (scored > 0) {
+            combo++
+            let tscore = (combo ^ 2 * 1000) + scored * 500
+            tscore += tscore * (level / 10)
+            IllIlI += Math.floor(tscore)
+
+            comboTimer = 1000
+            console.log(combo * 1000)
+
+            //shake effect
+            shakerTimer = shakerTimerConstant
+            shakeStrength = combo * 10
+
+        } else {
+            combo = 0
+
+        }
+    }
+
+
+    const checkGameOver = () => {
+        for (let i = 0; i < chunktable.length; i++) {
+            if (chunktable[i].y < 0)
+                return true
+        }
+        return false
+    }
+
+    const gameOver = () => {
+        gameover = true
+        pause = false
+        spacePressed = false
+        for (let j = 0; j < chunktable.length; j++) {
+            chunktable[j].setColorByType(-1)
+        }
+
+        if (IllIlI > b3st) {
+            b3st = IllIlI
+            localStorage.setItem('tet-best', b3st.toString())
+            localStorage.getItem('tet-best')
+        }
+    }
+
+    const initNextTypes = () => {
+        typeIdx = 0
+        nextTypeArr = getNextSeven()
+        nextType = nextTypeArr[typeIdx]
+        showNextBlocks()
+    }
+
+    const buildInitialBoundary = () => {
+        for (let i = 0; i < boundary.length; i++)
+            boundary.pop()
+
+        for (let i = 0; i < Math.floor(gameheight / blocksize) + 5; i++) {
+            boundary.push(new Block())
+            boundary[boundary.length - 1].setPos(-blocksize, blocksize * i - blocksize * 5)
+        }
+        for (let i = 0; i < Math.floor(gameheight / blocksize) + 5; i++) {
+            boundary.push(new Block())
+            boundary[boundary.length - 1].setPos(gamewidth, blocksize * i - blocksize * 5)
+        }
+        for (let i = 0; i < Math.floor(gamewidth / blocksize); i++) {
+            boundary.push(new Block())
+            boundary[boundary.length - 1].setPos(blocksize * i, gameheight)
+        }
+    }
+
+    const resetGame = () => {
+        level = 1
+        setDifficulty(level)
+        difficultyTimer = 25000
+        timeConstant = 800
+        timeStamp = 0
+        IllIlI = 0
+        gameover = false
+        pause = false
+        spacePressed = false
+        contextSaved = false
+
+        ctrl_chunk.reset(Math.floor(Math.random() * 7))
+
+        buildInitialBoundary()
+        //show block
+        initNextTypes()
+
+        while (chunktable.length > 0)
+            chunktable.pop()
+    }
+
+    /////////////////////////////////////////////////////////
+    // Effect 
+    //
+    /////////////////////////////////////////////////////////
+    let shakerTimer = 0
+    let shakerTimerConstant = 100
+    let contextSaved = false
+    let shakeStrength = 10
+
+    const shake = () => {
+        if (shakeStrength > 40) {
+            shakeStrength = 40
+        }
+
+        if (shakerTimer > 0) {
+            if (!contextSaved) {
+                cv.save()
+                contextSaved = true
+            }
+            if (shakerTimer % 20 == 0) {
+                cv.translate(-Math.random() * shakeStrength, 0)
+            } else {
+                cv.translate(Math.random() * shakeStrength, 0)
+            }
+            shakerTimer -= d
+        } else {
+            if (contextSaved) {
+                cv.restore()
+                contextSaved = false
+            }
+        }
+    }
+
+
+    ////////////////////////////////////////////////////////
+    // Util
+    ////////////////////////////////////////////////////////
+    const getNextSeven = () => {
+        let arr = []
+        while (arr.length < 7) {
+            let newnum = Math.floor(Math.random() * 7)
+            let e = false
+            for (let i = 0; i < arr.length; i++) {
+                if (arr[i] == newnum) {
+                    e = true
+                }
+            }
+            if (!e) {
+                arr.push(newnum)
+            }
+        }
+        return arr
+    }
+
+    const showNextBlocks = () => {
+        nextChunk.reset(nextType)
+        nextChunk.setPos(nextBlockMarginX, nextBlockMarginY)
+        nextChunk.setShape()
+    }
+
+    const fillZeroStr = (str) => {
+        result = ""
+        for (let i = 0; i < 8 - str.length; i++)
+            result += "0"
+        result += str.toString()
+        return result
+    }
+
+    const setDifficulty = (lvl) => {
+        if (lvl < 12) {
+            timerConstant = 800 - (lvl - 1) * 50
+        } else if (lvl < 14) {
+            timerConstant = 250
+            for (let i = 0; i < 10; i++) {
+                let tempB = new Block()
+                tempB.setPos(i * blocksize, gameheight - (lvl - 11) * blocksize)
+                boundary.push(tempB)
+            }
+            console.log('add line')
+        } else {
+            timerConstant = 250
+
+        }
+    }
+</script>
+
+</html>
