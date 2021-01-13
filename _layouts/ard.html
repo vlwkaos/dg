@@ -1,0 +1,2591 @@
+<!DOCTYPE html>
+<html>
+{% include head.html %}
+	<body id="b" scroll=none style="margin:0; padding:0; background-color: black;">
+    <nav class='custom_nav' style="position: absolute; left: 80vw">{% include nav.html %}</nav>
+		<canvas id="c" width=800 height=560 style="border:30px solid black; position:absolute;">
+		</canvas>
+		<div hidden=true id='p' style="color:antiquewhite; background-color: black;">ARD is paused - click / press any key to resume. 
+            L키로 언어 변경, D키로 데미지 표시방법 변경
+		<br><br> Changelog Ver.<span id='ver'></span><br>
+		<ul> 
+		<li>  신규 </li>
+		<ul> 
+		</ul>
+		<li> 밸런스 조정</li>
+			<ul> 
+			<li> 기타 밸런스</li>
+			</ul>
+		<li> 버그 수정</li>
+		<ul> 
+			<li> 기타 버그 수정</li>
+		</ul>
+		</ul>	
+		</div>
+	</body>
+<script>
+////////////////////////////////////
+//	All Random DEFENSE
+//////////////////////////////////////
+const ver = '2.0.6'
+const c=document.querySelector('#c')
+const p=document.querySelector('#p')
+const v=document.querySelector('#ver')
+v.innerHTML = ver
+const cv = c.getContext('2d')	
+
+const dbg={}
+dbg.on = false
+dbg.log = (str)=>{ if (dbg.on) console.log(str)}
+
+const langs = ['EN','KR']
+let lang = langs[1]
+const strings = {
+	build_tower :{
+		EN: 'BUILD TOWER',
+		KR: '포탑 건설'
+	},
+	magic: {
+		EN: 'MAGIC',
+		KR: '마법'
+	},
+	tower: {
+		EN: 'TOWER',
+		KR: '포탑'
+	},
+	manatower:{
+		EN: 'MANA TOWER',
+		KR: '마나타워'
+	},
+	upgrade: {
+		EN: 'UPGRADE',
+		KR: '강화'
+	},
+	sell: {
+		EN: 'SELL',
+		KR: '판매'
+	},
+	merge:{
+		EN: 'MERGE',
+		KR: '합체'
+	},
+	max:{
+		EN: 'MAX',
+		KR: 'MAX'
+	},
+	cancel:{
+		EN: 'CANCEL',
+		KR: '취소'
+	},
+	damage:{
+		EN: 'Damage',
+		KR: '피해량'
+	},
+	frequency: {
+		EN: 'Frequency',
+		KR: '공격속도'
+	},
+	range: {
+		EN: 'Range',
+		KR: '범위'
+	},
+	bulletSpeed: {
+		EN: 'BulletSpeed',
+		KR: '탄속'
+	},
+	critRate:{
+		EN: 'CritRate',
+		KR: '치명타 확률'
+	},
+	//---------------------------------------------------------------------
+	tooltip_build:{
+		EN: 'Build a tower.',
+		KR: '포탑 건설'
+	},
+	tooltip_nomral:{
+		EN: 'Build a normal tower.',
+		KR: '기본 포탑 건설.'
+	},
+	tooltip_merge: {
+		EN: 'Merge two towers of the same type to build  a higher tier one. Also returns some gold.',
+		KR: '같은 종류의 포탑을 합쳐 더 높은 등급의  포탑을 만듭니다. 소정의 금액도 반환됩니다.'
+	},
+	tooltip_upgrade: {
+		EN: 'Boosts stat according to rate.',
+		KR: '계수에 따라 포탑 향상.'
+	},
+	tooltip_manatower: {
+		EN: 'Build a mana tower.',
+		KR: '마나타워 건설.'
+	},
+	tooltip_magic: {
+		EN: 'Use mana to cast a spell.',
+		KR: '마나를 소모하여 마법사용.'
+	},
+	//---------------------------------------------------------------------
+	popup_nogold:{
+		EN: 'Not enough GOLD !!!',
+		KR: '응~ 돈 없음'
+	},
+	popup_cannot: {
+		EN: 'You cannot do that.',
+		KR: '그건 안되겠는 걸 보이'
+	},
+	popup_nomana: {
+		EN: 'Not enough MANA !!!',
+		KR: '마나가 부족합니다.'
+	},
+	
+	//------------Spells
+	lotto:{
+		EN: 'Lottery Ticket',
+		KR: '로또 복권'
+	},
+	tooltip_lotto:{
+		EN: 'Get 0~5 Gold.',
+		KR: '1~3 사이의 골드를 얻습니다.'
+	},
+	blizzard:{
+		EN: 'BLIZ ZARD',
+		KR: '눈보라'
+	},
+	tooltip_blizzard:{
+		EN: 'Slow enemies on the screen.',
+		KR: '화면상의 적을 느리게 만듭니다.'
+	},
+	stop:{
+		EN: 'TIME STOP',
+		KR: '그대로 멈춰라'
+	},
+	tooltip_stop:{
+		EN: 'Freezes enemies for a few seconds.',
+		KR: '잠깐. 동작그만.'
+	},
+	critbuff: {
+		EN: 'CRIT BUFF',
+		KR: '치명타 버프'
+	},
+	tooltip_critbuff:{
+		EN: 'Buffs critical chance for a few seconds',
+		KR: '치명타 확률이 잠깐 대폭 상승합니다.'
+	},
+	quest:{
+		EN: 'QUEST',
+		KR: '퀘스트'
+	},
+	tooltip_quest:{
+		EN: 'Fight a bonus enemy for extra $$.',
+		KR: '보너스 몹 소환.'
+	}
+	
+}
+
+
+const screenVariables={
+	width:c.width,
+	gamewidth:c.height,
+	height:c.height,
+	gameheight:c.height,
+	block:40,
+	mouseX:-255,
+	mouseY:-255,
+	padding: 20,
+	flashtimer:0,
+	flashtimerSetup: 1000,
+	flashcol: '0,0,0'
+}
+const sv = screenVariables
+
+
+window.onload=()=>{
+	c.hidden = true
+	p.hidden = false
+	gv.pause = true
+
+	initGame()
+	
+	
+	lastFrame=Date.now()
+	requestAnimationFrame(frame)	
+}
+
+let lastFrame
+const frame = ()=>{
+	gv.delta = Date.now() - lastFrame
+		
+	if (gv.delta > 15)
+		gv.delta = 15
+	if (gv.pause){
+		
+	} else {
+		update()
+		render()	
+	}
+	lastFrame = Date.now()
+	requestAnimationFrame(frame)
+	
+}
+
+
+
+const update = ()=>{
+	if (gv.life > 0 && gv.wave >= 61){
+		// win
+	} else if (gv.life <= 0) {
+			// game over
+		gv.life =0
+	} else {
+		gv.timer += gv.delta
+		
+		if (gv.bufftimer > 0){
+			gv.bufftimer -= gv.delta
+		} else {
+			gv.bufftype = 'none'
+		}
+		// fill mana
+		if (gv.manatimer <= 0){
+			if (gv.mana < gv.maxmana)
+				gv.mana++
+			gv.manatimer = 10000
+		} else {
+			gv.manatimer -= gv.delta
+		}
+		if (gv.enemyCount <=0){
+			// no enemy to spawn
+			let clear = true
+			for (i in gv.enemies)
+			if (gv.enemies[i].hp > 0){
+				clear = false
+			}	
+			
+			//no enemy alive
+			if (clear){
+				// times up
+				if (gv.wavetimer <= 0 ) {
+					gv.wavetimer = 5000
+					
+					if (gv.life < gv.maxlife)
+						gv.life++
+					if (gv.wave %10 == 9)
+						gv.bossSpawn = 1
+					else
+						gv.enemyCount = 25
+					
+					gv.wave++
+				} else {
+					gv.wavetimer -= gv.delta
+				}
+			}
+		} else {
+			gv.stopwatch+=gv.delta
+		}
+			
+		spawnEnemies()
+		
+		for (key in gv.FXs)
+			for (let i=0;i<gv.FXs[key].length;i++)
+				gv.FXs[key][i].update()
+				
+		for (let i=0;i<gv.towers.length;i++){
+			gv.towers[i].update()
+			
+		}
+		
+		for (let i=0;i<gv.bullets.length;i++)
+			gv.bullets[i].update()
+		
+		for (let i=0;i<gv.enemies.length;i++)
+			gv.enemies[i].update()
+		}
+}
+
+const render = ()=>{
+	cv.fillStyle='rgba(0,0,0,1)'
+	cv.fillRect(0,0,screenVariables.width,screenVariables.height)
+	
+
+	renderMap()
+	renderUI()
+	 if (gv.life == 0){	
+		cv.font = "56px Arial"
+		cv.fillStyle = 'rgba(255,255,255)'
+		cv.textAlign = "center"
+		cv.fillText("GAME OVER", sv.gamewidth/2, sv.gameheight/2)
+	 } 
+	 if (gv.wave >= 61){
+	 	cv.font = "56px Arial"
+		cv.fillStyle = 'rgba(255,255,255)'
+		cv.textAlign = "center"
+		cv.fillText("You win... for now.", sv.gamewidth/2, sv.gameheight/2)
+	 }
+	 
+	 flash(sv.flashcol)
+}
+
+const renderMap=()=>{
+
+	for (i in gv.paths)
+		gv.paths[i].render()
+	
+
+	for (let i=0;i<gv.towers.length;i++)
+		gv.towers[i].render()
+	
+	for (let i=0;i<gv.enemies.length;i++)
+		gv.enemies[i].render()
+		
+	for (let i=0;i<gv.bullets.length;i++)
+		gv.bullets[i].render()
+	
+}
+
+const renderUI=()=>{
+	//show range
+	if (gv.selected != null && gv.selected.level > 0){
+		cv.beginPath()
+		cv.fillStyle='rgba(255,255,255,0.1)'
+		cv.arc(gv.selected.oX,gv.selected.oY,gv.selected.stats.range*sv.block,0,Math.PI*2)
+		cv.fill()
+		cv.closePath()
+	}
+	let tempX = sv.gamewidth
+	let tempY = 0
+	
+
+	cv.fillStyle = 'rgb(0,0,0)'
+	cv.fillRect(tempX,tempY, sv.width-sv.gamewidth,sv.height)
+	
+
+	cv.font = "12px Arial"
+	cv.textAlign = "start"
+	cv.strokeStyle='rgb(255,255,255)'
+	
+	cv.strokeRect(0,0,sv.gamewidth,sv.gameheight)
+	cv.strokeRect(sv.gamewidth,0,sv.width - sv.gamewidth, sv.padding*6)
+	
+	// my hp
+	cv.fillStyle='rgba(230,50,50,1)'
+	
+	cv.fillRect(sv.gamewidth,0,(sv.width - sv.gamewidth)* (gv.life/gv.maxlife), sv.padding)
+	cv.strokeRect(sv.gamewidth,0,sv.width - sv.gamewidth  , sv.padding*2)
+	cv.fillStyle='rgba(255,255,255,1)'
+	cv.textAlign="center"
+	cv.fillText(`HP (${gv.life}\/${gv.maxlife})`,sv.gamewidth+(sv.width - sv.gamewidth)/2, sv.padding/2+5)
+
+	
+	// my mp
+	if (gv.maxmana > 0){
+	cv.fillStyle='rgba(50,50,230,1)'
+	
+	cv.fillRect(sv.gamewidth,sv.padding,(sv.width - sv.gamewidth)* (gv.mana/gv.maxmana), sv.padding)
+	cv.strokeRect(sv.gamewidth,0,sv.width - sv.gamewidth  , sv.padding*2)
+	cv.fillStyle='rgba(255,255,255,1)'
+	cv.textAlign="center"
+	cv.fillText(`MP (${gv.mana}\/${gv.maxmana})`,sv.gamewidth+(sv.width - sv.gamewidth)/2, 3*sv.padding/2+5)
+	}
+	
+	cv.font = "16px Arial"
+	
+	tempX = sv.gamewidth+sv.padding
+	tempY = sv.padding*3+5
+	
+
+	//gold
+	cv.textAlign="start"
+	cv.fillText(`Gold: `, tempX, tempY)
+	tempX = sv.width - sv.padding*2
+	cv.textAlign="end"
+	cv.fillText(`${gv.gold}`, tempX, tempY)
+		
+	cv.textAlign = "start"
+	tempX = sv.gamewidth+sv.padding		
+	tempY += sv.padding*2
+	cv.fillText(`Wave ${gv.wave}  ◁   ${(Math.floor(gv.wavetimer/1000))} s`, tempX, tempY)
+
+
+	//info window dependent on selection
+	cv.textAlign="start"
+	tempX = sv.gamewidth+sv.padding
+	tempY = sv.padding*8
+	cv.fillStyle = 'rgb(255,255,255)'
+	cv.strokeRect(sv.gamewidth, 0, sv.width - sv.gamewidth,sv.height)
+	if (gv.selected != null){
+		if (gv.selected.level==0){
+			cv.fillText('Empty',tempX, tempY)
+			
+			// selector
+			cv.strokeStyle = 'rgb(200,200,200)'
+			cv.strokeRect(gv.selected.drawX+4*Math.sin(gv.timer/200)+8,gv.selected.drawY+4*Math.sin(gv.timer/200)+8, 
+			sv.block-8*Math.sin(gv.timer/200)-16,sv.block-8*Math.sin(gv.timer/200)-16)
+		
+		} else {
+			
+			cv.fillStyle = 'rgb(255,255,255)'
+			cv.fillText(`Lv.${gv.selected.level} ${strings.tower[lang]}`, tempX, tempY)
+			cv.font = "16px Arial"
+			tempY += sv.padding
+			
+			//info
+			for (key in gv.selected.stats){
+				tempY += sv.padding
+				cv.textAlign = "start"
+				cv.fillText(strings[key][lang], tempX, tempY)
+				tempX = sv.width - sv.padding*2
+				cv.textAlign = "end"
+				cv.fillText(`${gv.selected.stats[key].toFixed(2)}`, tempX, tempY)
+				tempX = sv.gamewidth+sv.padding
+			}
+			cv.textAlign = "start"
+			
+			let tier = gv.selected.special.tier
+			if (tier != 'none'){
+				let col = '155,155,155'
+				switch (tier){
+					case 'util': col = '100,255,100' 
+					break
+					case 'magic': col = '100,100,255' 
+					break
+					case 'rare': col = '235,235,100' 
+					break
+					case 'legendary': col = '255,180,50' 
+					break
+					case 'ascended': col = '255,40,100'
+					break
+				}
+				tempY += sv.padding
+				cv.fillStyle = `rgb(${col})`
+				cv.fillText(gv.selected.special.type, tempX, tempY)
+			}			
+		}
+	}
+	
+	renderMenu()
+	
+	//version
+	cv.font = '8px Arial'
+	cv.textAlign = 'start'
+	let t = 'Ver'+ver
+	cv.fillText(t, sv.width-t.length*4,sv.height-4)
+	
+	for (key in gv.FXs)
+		for (let i=0;i<gv.FXs[key].length;i++)
+			gv.FXs[key][i].render()
+}
+///////////////////////////////////////////////////////////////////////
+//----------------RENDER MENU-----------------------------
+/////////////////////////////////////////////////////////////////////
+const renderMenu = ()=>{
+	if (gv.selected != null){
+		if (gv.menu == 'magic'){
+				gv.buttons[0].render(`${strings.lotto[lang]} ${gv.special.magics.lotto}MP`)
+				gv.buttons[0].onHover(strings.tooltip_lotto[lang])
+				
+				gv.buttons[1].render(`${strings.blizzard[lang]} ${gv.special.magics.blizzard}MP`)
+				gv.buttons[1].onHover(strings.tooltip_blizzard[lang])
+			
+				gv.buttons[2].render(`${strings.stop[lang]} ${gv.special.magics.stop}MP`)
+				gv.buttons[2].onHover(strings.tooltip_stop[lang])
+				
+				gv.buttons[3].render(`${strings.critbuff[lang]} ${gv.special.magics.critbuff}MP`)
+				gv.buttons[3].onHover(strings.tooltip_critbuff[lang])
+			
+				gv.buttons[4].render(`${strings.quest[lang]} ${gv.special.magics.quest}MP`)
+				gv.buttons[4].onHover(strings.tooltip_quest[lang])
+				
+				gv.buttons[5].render(strings.cancel[lang])
+		}
+		
+
+		if (gv.selected.level == 0){
+			if (gv.menu == 'top') {
+				// only buy
+				gv.buttons[3].render(strings.build_tower[lang])
+				gv.buttons[3].onHover(strings.tooltip_build[lang])
+				
+				}
+			if (gv.menu == 'build') {
+				//
+				gv.buttons[0].render(`${strings.tower[lang]} ${gv.selected.price}G`)
+				gv.buttons[0].onHover(strings.tooltip_nomral[lang])
+				
+				gv.buttons[1].render(`${strings.manatower[lang]} ${gv.selected.specialprice.ManaTower}G`)
+				gv.buttons[1].onHover(strings.tooltip_manatower[lang])
+				
+				gv.buttons[5].render(strings.cancel[lang])
+			}
+			
+			
+			
+		} else {
+			if (gv.menu == 'top'){
+				if (gv.selected.special.tier != 'util'){
+					if (gv.selected.level < 7){
+						gv.buttons[0].render(`${strings.upgrade[lang]} ${gv.selected.upgradeprice}G`)
+						gv.buttons[0].onHover(strings.tooltip_upgrade[lang])
+					} else {
+						gv.buttons[0].render(strings.max[lang])
+					}
+					
+					if (gv.selected.special.type != 'legendary'){
+							gv.buttons[1].render(strings.merge[lang])
+							gv.buttons[1].onHover(strings.tooltip_merge[lang])
+					} else {
+							gv.buttons[1].render(strings.max[lang])
+							
+					}
+				} 
+				gv.buttons[5].render( `${strings.sell[lang]} ${gv.selected.sellprice}G`)
+			}
+		}
+	
+		if (gv.menu == 'top'){
+			gv.buttons[4].render(strings.magic[lang])
+			gv.buttons[4].onHover(strings.tooltip_magic[lang])
+		}		
+	
+	}	
+}
+
+
+
+/////////////////////////////////////////////////////
+// game functions
+/////////////////////////////////////////////////////
+const gameVariables={
+	selected: null,
+	dmgmodes: ['all','dps','none'],
+	dmgmode: 'all',
+	//game
+	wave: 0,
+	maxlife: 30,
+	life: 30,
+	maxmana: 0,
+	mana: 0,
+	manatimer: 10000,
+	bufftimer : 0,
+	bufftype: 'none',
+	gold: 20,
+	delta:0,
+	timer: 0,
+	wavetimer: 10000,
+	stopwatch:0,
+	//map
+	paths: {},
+	towers: [],
+	enemyCount: 0,
+	enemies:[],
+	bullets: [],
+	//ui
+	buttons:[],
+	menu: 'top',
+	FXs: {
+		popup: [],
+		splash: [],
+		slash: []
+	},
+	// useful values
+	special:{
+		types: { 
+			normal: ['Basic','Rifle', 'Marksman', 'Pulse', 'Shotgun', 'Dagger'],
+			magic: ['4-Way', 'Machinegun','Sniper', 'Earthquake', 'Bomb', 'Sword'],
+			rare : ['8-Way','FlameThrower', 'SniperElite','RapidShot', 'GreatSword','FrozenNova','SnowBall'],
+			legendary: ['8-Guided' ,'LASER','MagnumShot', 'JEDI', 'Samurai', 'GOD'],
+			ascended: ['DiscoBall','Nuke']
+		},
+		magics: {
+			lotto: 4,
+			blizzard: 5,
+			stop: 10,
+			critbuff: 5,
+			quest: 8
+		}
+	}
+}
+const gv = gameVariables
+
+const getStat= (type)=>{
+	let stats;
+	switch (type){
+		case 'Basic':
+			stats = {
+				damage : 4.1,
+				critRate : 20.0,
+				frequency : 1.6,
+				range : 1.6,
+				bulletSpeed : 2.0
+			}
+		break
+		case 'Rifle':
+			stats = {
+				damage : 1.1,
+				critRate : 30.0,
+				frequency : 5.0,
+				range : 1.4,
+				bulletSpeed : 2.0
+			}
+		break
+		case 'Marksman':
+			stats = {
+				damage : 8.3,
+				critRate : 45.0,
+				frequency : 0.5,
+				range : 3.0,
+				bulletSpeed : 3.5
+			}
+		break
+		case 'Pulse':
+			stats = {
+				damage : 2.0,
+				critRate : 20.0,
+				frequency : 1.0,
+				range : 1.6,
+				bulletSpeed : 0
+			}
+		break
+		case 'Shotgun':
+			stats = {
+				damage : 1.3, // * 5 
+				critRate : 30.0,
+				frequency : 0.8,
+				range : 1.4,
+				bulletSpeed : 2.0
+			}
+		break
+		case 'Dagger':
+			stats = {
+				damage : 2.4,
+				critRate : 40.0,
+				frequency : 2.0,
+				range : 1.4,
+				bulletSpeed : 0.0
+			}
+		break
+
+	//magic: ['4-Way', 'Machinegun','Sniper', 'Earthquake', 'Bomb', 'Sword'],
+		case '4-Way':
+			stats = {
+				damage : 5.5,
+				critRate : 25.0,
+				frequency : 1.2,
+				range : 1.7,
+				bulletSpeed : 2.2
+			}
+		break
+		case 'Machinegun':
+			stats = {
+				damage : 1.3,
+				critRate : 35.0,
+				frequency : 6.0,
+				range : 1.6,
+				bulletSpeed : 2.5
+			}
+		break
+		case 'Sniper':
+			stats = {
+				damage : 15.5,
+				critRate : 50.0,
+				frequency : 0.5,
+				range : 3.5,
+				bulletSpeed : 4.0
+			}
+		break
+		case 'Earthquake':
+			stats = {
+				damage : 1.4,
+				critRate : 25.0,
+				frequency : 3.0,
+				range : 1.7,
+				bulletSpeed : 0
+			}
+		break
+		case 'Bomb':
+			stats = {
+				damage : 4.5, // * 5 
+				critRate : 25.0,
+				frequency : 1.0,
+				range : 1.8,
+				bulletSpeed : 1.6
+			}
+		break
+		case 'Sword':
+			stats = {
+				damage : 4.6,
+				critRate : 45.0,
+				frequency : 1.5,
+				range : 1.6,
+				bulletSpeed : 0.0
+			}
+		break
+		// rare
+		case '8-Way':
+			stats = {
+				damage : 9.5,
+				critRate : 30.0,
+				frequency : 1.4,
+				range : 1.8,
+				bulletSpeed : 2.3
+			}
+		break
+		case 'FlameThrower':
+			stats = {
+				damage : 2.7,
+				critRate : 40.0,
+				frequency : 8.0,
+				range : 1.8,
+				bulletSpeed : 1.5
+			}
+		break
+		case 'SniperElite':
+			stats = {
+				damage : 28.0,
+				critRate : 55.0,
+				frequency : 0.5,
+				range : 4.5,
+				bulletSpeed : 5.0
+			}
+		break
+		case 'FrozenNova':
+			stats = {
+				damage : 6.0,
+				critRate : 30.0,
+				frequency : 1.0,
+				range : 2.0,
+				bulletSpeed : 0
+			}
+		break
+		case 'RapidShot':
+			stats = {
+				damage : 2.6, // * 7
+				critRate : 50.0,
+				frequency : 1.5,
+				range : 1.8,
+				bulletSpeed : 2.5
+			}
+		break
+		case 'GreatSword':
+			stats = {
+				damage : 15.5,
+				critRate : 45.0,
+				frequency : 1.0,
+				range : 2.0,
+				bulletSpeed : 0.0
+			}
+		break
+		case 'SnowBall':
+			stats = {
+				damage : 12.0,
+				critRate : 30.0,
+				frequency : 1.0,
+				range : 5.0,
+				bulletSpeed : 1.0
+			}
+		break	
+		// legend
+		case '8-Guided':
+				stats = {
+				damage : 10.0,
+				critRate : 50.0,
+				frequency : 1.5,
+				range : 2.0,
+				bulletSpeed : 2.0
+			}
+		break
+		case 'LASER':
+			stats = {
+				damage : 4.0,
+				critRate : 50.0,
+				frequency : 20.0,
+				range : 4.0,
+				bulletSpeed : 0.0
+			}
+		break
+		case 'MagnumShot':
+			stats = {
+				damage : 3.8, // 8
+				critRate : 65.0,
+				frequency : 2.0,
+				range : 2.0,
+				bulletSpeed : 3.0
+			}
+		break
+		case 'JEDI':
+			stats = {
+				damage : 11.0,
+				critRate : 80.0,
+				frequency : 4.0,
+				range : 2.2,
+				bulletSpeed : 0.0
+			}
+		break
+		case 'Samurai':
+			stats = {
+				damage : 24, // * 7
+				critRate : 85.0,
+				frequency : 0.5,
+				range : 6.0,
+				bulletSpeed : 0.0
+			}
+		break
+		case 'GOD':
+			stats = {
+				damage : 5.5,
+				critRate : 50.0,
+				frequency : 1.0,
+				range : 2.0,
+				bulletSpeed : 2.0
+			}
+		break
+		//
+		case 'DiscoBall':
+			stats = {
+				damage : 1.0,
+				critRate : 50.0,
+				frequency : 1.0,
+				range : 3.0,
+				bulletSpeed : 1.0
+			}
+		break
+		case 'Nuke':
+			stats = {
+				damage : 1.0,
+				critRate : 50.0,
+				frequency : 0.4,
+				range : 3.0,
+				bulletSpeed : 0.6
+			}
+		break
+	}		
+	
+	return stats
+	
+}
+
+
+// INITIALIZE GAME
+const initGame=()=>{
+	// Init UIrelated
+	for (let i=0;i < 500; i++)
+		gv.FXs.popup.push(new TextPopUp())
+	
+	for (let i=0;i < 300; i++)
+		gv.FXs.splash.push(new SplashIndicator())
+	
+	for (let i=0;i < 100; i++)
+		gv.FXs.slash.push(new SlashIndicator())
+	
+	
+	// init buttons
+	let size = 60
+	let tempX = sv.gamewidth+size/4 
+	let tempY = sv.height - 11*size/4
+	gv.buttons.push(new BoxButton(tempX,tempY,size))
+	tempX += size+size/4
+	gv.buttons.push(new BoxButton(tempX,tempY,size))
+	tempX += size+size/4
+	gv.buttons.push(new BoxButton(tempX,tempY,size))
+	
+	tempY += size+ size/4
+	tempX = sv.gamewidth+size/4 
+	gv.buttons.push(new BoxButton(tempX,tempY,size))
+	tempX += size+size/4
+	gv.buttons.push(new BoxButton(tempX,tempY,size))
+	tempX += size+size/4
+	gv.buttons.push(new BoxButton(tempX,tempY,size))
+	
+	
+	for (let i=0;i<40;i++)
+		gv.enemies.push(new Target())
+	
+	for (let i=0;i<1000;i++)
+		gv.bullets.push(new Bullet(i))
+	
+	
+	//circuits
+	let x,y,s,e
+	let turn=0
+	s = [2,8]
+	
+	for (let i=0; i < 14; i++){
+		let x=s[0]
+	
+		if (i!=0 &&  i%3==0){
+			turn++
+		}
+		for (let j=0;j<2;j++)
+			for (let k=0;k<2;k++){
+				switch (turn){
+					case 0: x = s[j]; y=s[k]+ i%3; break;
+					case 1: x = s[j]+ i%3; y=s[k]+3; break;
+					case 2: x = s[j]+3; y=s[k]+3-i%3; break;
+					case 3: x = s[j]+3-i%3; y = s[k]; break; 
+				}
+
+				if (!gv.paths[`${x},${y}`])
+					gv.paths[`${x},${y}`] = new Path(x,y)
+				
+			}
+				
+	}
+	
+	// middle bound
+	s = [5,8]
+	e = [6,7]
+		for (let j=0;j<2;j++)
+				for (let k=0;k<2;k++){
+					x = s[j]
+					y = e[k]
+					if (!gv.paths[`${x},${y}`])
+						gv.paths[`${x},${y}`] = new Path(x,y)
+					
+					x = e[j]
+					y = s[k]
+					if (!gv.paths[`${x},${y}`])
+						gv.paths[`${x},${y}`] = new Path(x,y)
+				}
+		
+	//entrance
+	s = [2,5]
+	for (let i=0;i<2;i++)
+		for (let j=0;j<2;j++){
+			x = s[i]
+			y =j
+			if (!gv.paths[`${x},${y}`])
+				gv.paths[`${x},${y}`] = new Path(x,y)
+		}
+	gv.paths['2,0'].flag = "↓"
+	gv.paths['5,0'].flag = "↑"
+	
+	delete gv.paths['3,2']
+	delete gv.paths['4,2']
+
+	for (let i=0;i<14;i++)
+		for (let j=0;j<14;j++){
+			if (!gv.paths[`${i},${j}`])
+				gv.towers.push(new Tower(i,j))
+		}
+}
+
+const spawnEnemies=()=>{
+	
+	if (gv.bossSpawn > 0){
+		gv.bossSpawn--
+		for (let i=0;i<gv.enemies.length;i++){
+				if (gv.enemies[i].hp <= 0){
+					let hp = 25*gv.wave*8.5/4
+						gv.enemies[i].setFlag('BOSS')
+					if (gv.wave == 10){
+						gv.enemies[i].spawn(hp, 0.5 , 0.5)  // normal
+					}
+					if (gv.wave == 20){
+						gv.enemies[i].spawn(hp*1.2, 0.4 , 0.2)  // small size
+					}
+					if (gv.wave == 30){
+						gv.enemies[i].spawn(hp*1.3, 3.0  , 1.0)  // high speed
+					}
+					if (gv.wave == 40){
+						gv.enemies[i].spawn(hp*1.7, 1.0  , 0.3)  // 
+					}
+					if (gv.wave == 50){
+						gv.enemies[i].spawn(hp*3.0, 1.5  , 0.3)  // hp, speed, size
+					}
+					
+					if (gv.wave == 60){
+						gv.enemies[i].spawn(hp*14, 2.0  , 5.0)  // hp, speed, size
+					}
+					
+					break;
+				}
+			}
+		
+	} else {
+		if (gv.enemyCount  > 0 && gv.stopwatch  > 1000){
+			gv.stopwatch = 0+Math.random()*100-50
+			gv.enemyCount--
+			
+			let hp = gv.wave*8.5
+			let speed = 0.5 
+			let size = 0.5 - gv.wave*0.005
+			
+			
+			if (size < 0.3)
+				size = 0.3
+			
+			for (let k = 0; k< gv.wave ;k++){
+				for (let d = 2; d <= 11; d++){
+					if (k > d*5 && k % d==0)
+						hp+=gv.wave
+				}
+			}
+			
+			if (gv.wave > 20)
+				speed+= gv.wave*0.005
+			
+			if (gv.wave % 5 == 0){
+				speed *= 2
+				hp /= 2
+			}
+				
+			
+			for (let i=0;i<gv.enemies.length;i++){
+				if (gv.enemies[i].hp <= 0){	
+					gv.enemies[i].spawn(hp,speed,size)  // hp, speed, size
+					break;
+				}
+			}
+		}
+	}
+}
+/////////////////////////////////////////////////////////////////////////////////////////////////
+const calculateDamage=(damage, critrate)=>{
+	let rand = Math.random()*100+1
+	let ret = damage
+	let cr = false
+	
+	if (rand <= critrate){
+		if (critrate > 100)
+			ret *= (1+(critrate - 100)/100)
+		ret *= 1.5
+		cr = true
+	}
+
+	ret +=  (Math.random()-0.5) * ret / 4
+	
+	if (ret <= 0) 
+		ret = 0
+	if (isNaN(ret))
+		ret = 0
+	
+	return {val:ret, crit: cr}
+}
+
+/////////////////////////////////////////////////////
+// Char Class
+/////////////////////////////////////////////////////
+class Target {
+	constructor(){
+		this.kill()
+	}
+	
+	update(){
+		if (this.hp >0) {
+			this.processStatus()
+			
+			if ( this.oX  > 5*sv.block+sv.block/2 - gv.delta*this.speed/20 	&& this.oX < 5*sv.block+sv.block/2 + gv.delta*this.speed/20 &&
+				  this.oY  > sv.block/2 - gv.delta*this.speed/20 	&& this.oY < sv.block/2 + gv.delta*this.speed/20){
+				//exit
+				if (this.flag == 'BOSS') {
+					gv.life -= 25
+				} else if (this.flag == 'BONUS') {
+					gv.life -= 5
+				} else {
+					gv.life--
+				}
+				let worth = 1
+				gv.gold+= worth
+				textPopUp(`+${worth.toFixed(1)} G`, sv.width- sv.padding*2,sv.padding*3 ,'random')
+				
+				this.kill()
+
+			}				  
+			
+			let speed = gv.delta*this.speed/10
+			
+			switch (this.direction){
+				case 0 : this.oY += speed; break; // down
+				case 1 : this.oX += speed; break; // right
+				case 2 : this.oY -= speed; break; // up
+				case 3 : this.oX -= speed; break; // left
+			}
+
+			for (i in gv.paths){
+				if ( this.oX  > gv.paths[i].oX - speed 	&& this.oX < gv.paths[i].oX + speed &&
+					  this.oY  > gv.paths[i].oY - speed	&& this.oY < gv.paths[i].oY + speed){
+					if (gv.paths[i].border[this.direction]){
+					  // its blocked
+						this.direction = (this.direction+1)%4
+						this.oX = gv.paths[i].oX
+						this.oY = gv.paths[i].oY
+					}	
+				}			
+			}
+		}
+	} 
+	
+	processStatus(){
+		//magic
+	
+		// timer
+		// works by setting counter to set values
+		for (key in this.statusTimer)
+			if (this.statusTimer[key].counter > 0)
+				this.statusTimer[key].counter-= gv.delta
+				
+		//	chill
+		if (this.statusTimer.stop.counter > 0){
+			this.speed = 0
+		} else if (this.statusTimer.chill.counter > 0){
+			this.speed = this.originalSpeed * 0.5
+		} else {
+			this.statusTimer.chill.set = 0
+			this.speed = this.originalSpeed
+		}
+		
+		// poison
+		if (this.statusTimer.poison.round > 0){
+			if (this.statusTimer.poison.counter <= 0){
+				this.statusTimer.poison.round--
+				this.statusTimer.poison.counter = this.statusTimer.poison.set
+				let dmg = calculateDamage(this.hp/10, -1) // current hp 
+				if (dmg.val < 1.0)
+					dmg.val = 1.0
+				this.takeDamage(dmg)
+			}
+		}
+		
+		if (this.statusTimer.dpsmeter.counter <= 0){
+		
+			if (gv.dmgmode == 'dps' && this.dps > 0)
+				textPopUp(`-${this.dps.toFixed(1)}`,this.oX,this.oY,'255,255,255')
+			
+			
+			this.dps = 0
+			
+			this.statusTimer.dpsmeter.counter = this.statusTimer.dpsmeter.set
+		}
+	}
+	
+	render(){
+		if (this.hp > 0) {
+			cv.beginPath()
+			cv.strokeStyle= `rgba(${Math.floor(255*(1-this.hp/this.maxHP))},${Math.floor(255*(this.hp/this.maxHP))},0,1)`
+			cv.arc(this.oX,this.oY, this.radius*sv.block,0,Math.PI*2)
+			cv.stroke()
+			cv.closePath()
+			
+			if (this.statusTimer.chill.counter > 0){
+				cv.beginPath()
+				cv.strokeStyle= `rgba( 50, 80, 235,${this.statusTimer.chill.counter/this.statusTimer.chill.set})`
+				cv.arc(this.oX,this.oY, this.radius*sv.block-2,0,Math.PI*2)
+				cv.stroke()
+				cv.closePath()
+			}
+			
+			if (this.statusTimer.poison.round > 0){
+				cv.beginPath()
+				cv.strokeStyle= `rgba( 50, 235, 50,${this.statusTimer.poison.counter/this.statusTimer.poison.set})`
+				cv.arc(this.oX,this.oY, this.radius*sv.block-4,0,Math.PI*2)
+				cv.stroke()
+				cv.closePath()
+			}
+
+			if (this.flag != ''){
+				cv.font = '15px Arial'
+				cv.textAlign = 'center'
+				cv.fillStyle = `rgba(${Math.floor(Math.sin(gv.timer)*125)+100},${Math.floor(Math.cos(gv.timer)*125)+100},${Math.floor(Math.tan(gv.timer)*125)+100})`
+				cv.fillText(this.flag,this.oX,this.oY-this.radius*sv.block-2)
+			}
+		}
+	}
+	
+	kill(){
+
+		if (gv.dmgmode == 'dps' && this.dps > 0)
+			textPopUp(`-${this.dps.toFixed(1)}`,this.oX,this.oY,'255,255,255')
+			
+		
+	
+		this.oX = -255
+		this.speed=0
+		this.hp = 0
+		this.flag = ''
+		
+		this.resetTimer()
+	}
+	
+	takeDamage(dmg){	
+		if (dmg.val!=0) {
+			this.hp-= dmg.val
+			
+			dbg.log('Enemy HP: ' + this.hp)
+			this.dps += dmg.val
+			
+			if (gv.dmgmode == 'all')
+				if (dmg.crit)
+					textPopUp(`-${dmg.val.toFixed(1)}`,this.oX,this.oY,'255,255,0')
+				else
+					textPopUp(`-${dmg.val.toFixed(1)}`,this.oX,this.oY,'255,255,255')
+				
+			
+			if (this.hp<= 0){
+				let worth = 1
+				if (this.flag == 'BOSS')
+					worth  = 20
+				if (this.flag == 'BONUS')
+					worth = 10
+				
+				gv.gold+= worth
+				textPopUp(`+${worth.toFixed(1)} G`,sv.width- sv.padding*2,sv.padding*3 ,'random')
+				
+				this.kill()
+			}
+		}
+	}
+	
+	spawn(maxHP, speed, radius){
+		this.x = 2
+		this.y = 0
+		this.drawX = this.x*sv.block
+		this.drawY = this.y*sv.block
+		this.direction = 0
+		this.oX = this.drawX+sv.block/2
+		this.oY = this.drawY+sv.block/2
+		
+		
+		this.dps = 0
+		this.radius = radius
+		
+		this.maxHP = maxHP
+		this.hp = maxHP
+		this.originalSpeed = speed
+		this.speed = speed
+		
+		this.resetTimer()
+		
+	}
+	
+	resetTimer(){
+		this.statusTimer = {
+			poison: {set: 1000, round: 0, counter: 0 },
+			chill: {set: 0, counter:0},
+			stop: {set: 3000, counter: 0},
+			dpsmeter: {set: 1000, counter:0}
+		}
+	}
+	
+	setFlag(t){
+		this.flag  = t
+	}
+}
+
+// TOWER
+class Tower{
+	constructor(x,y){
+		// size is already defined
+		this.x = x
+		this.y = y
+		this.drawX = x*sv.block
+		this.drawY = y*sv.block
+		this.oX = this.drawX+sv.block/2
+		this.oY = this.drawY+sv.block/2
+		this.resetStats()
+		this.recalculatePrice()
+
+	}
+	
+	resetStats(){
+		this.level = 0
+		this.stats = {
+			damage : 0.0,
+			critRate : 0.0,
+			frequency : 0.0,
+			range : 0.0,
+			bulletSpeed : 0.0
+		}
+			
+		this.upval = {
+			damage : 0.0,
+			critRate : 0.0,
+			frequency : 0.0,
+			range :0.0,
+			bulletSpeed : 0.0
+		}
+		
+		this.special = {
+			color : '0,0,0',
+			tier: 'none',
+			type: 'none'
+
+		}
+		
+		this.specialprice = {
+			ManaTower : 15,
+			
+		}
+
+		this.freqtimer = 1000
+	}
+	
+	update(){
+		if (this.level == 0){
+			
+		} else {
+			if (this.special.tier != 'util')
+				if (gv.bufftype == 'critbuff' && gv.bufftimer > 0){
+					this.stats.critRate = this.originalCritRate+ 50
+				} else {
+					this.stats.critRate = this.originalCritRate
+				}
+			
+			
+			this.freqtimer+=gv.delta
+			if (this.freqtimer > 1000/this.stats.frequency){
+				for (let i=0 ; i< gv.enemies.length;i++){
+					if (gv.enemies[i].hp > 0){
+						if (disc(gv.enemies[i].oX, gv.enemies[i].oY, gv.enemies[i].radius*sv.block,
+									this.oX, this.oY, this.stats.range*sv.block)<= 0 ){
+							// in range	
+							
+								let theta = Math.atan2((gv.enemies[i].oY-this.oY),(gv.enemies[i].oX-this.oX))
+
+								//dbg.log('Bullet theta:' +theta)
+								switch (this.special.type){
+									//['Basic','Rifle', 'Marksman', 'Pulse', 'Shotgun', 'dagger'],
+									case 'Pulse':
+										splash(this.oX,this.oY,this.stats, this.special)
+									break
+									case 'Shotgun':
+										for (let b = 0 ; b < 5; b++) 
+											this.shoot(theta)
+									break
+									case 'Dagger':
+										slash(this.oX,this.oY, this.stats, this.special, theta, Math.PI/18.0)
+									break
+									//magic: ['4-Way', 'Machinegun','Sniper', 'Earthquake', 'Bomb', 'Sword'],
+									case '4-Way':
+										for (let b =0; b< 4; b++)
+											this.shoot(theta+b*Math.PI/2.0)
+									break
+									case 'Earthquake':
+										splash(this.oX,this.oY,this.stats, this.special)
+									break
+									case 'Sword':
+										slash(this.oX,this.oY, this.stats, this.special, theta, Math.PI/3.0)
+									break		
+								//['8-Way','FlameThrower', 'SniperElite','RapidShot', 'GreatSword','FrozenNova','SnowBall'],					
+									case '8-Way':
+										for (let b =0; b< 8; b++)
+											this.shoot(theta+b*Math.PI/4.0)
+									break
+									case 'FrozenNova':
+										splash(this.oX,this.oY,this.stats, this.special)
+									break
+									case 'RapidShot':
+										for (let b = 0 ; b < 7; b++) 
+											this.shoot(theta)
+									break
+									case 'GreatSword':
+										slash(this.oX,this.oY, this.stats, this.special, theta, Math.PI/2.0)
+									break		
+									// LEGENDARY
+									case '8-Guided':
+										for (let b =0; b< 8; b++)
+											this.shoot(theta+b*Math.PI/4.0)
+									break
+									case 'LASER':
+										slash(this.oX,this.oY, this.stats, this.special, theta, Math.PI/180.0)
+									break
+									case 'MagnumShot':
+										for (let b = 0 ; b < 8; b++) 
+											this.shoot(theta)
+									break
+									case 'JEDI':
+										slash(this.oX,this.oY, this.stats, this.special, theta, 110*Math.PI/180.0)
+									break
+									case 'Samurai':
+										slash(this.oX,this.oY, this.stats, this.special, theta, 110*Math.PI/180.0)
+									break
+									default:
+										this.shoot(theta)
+									break
+								}
+								this.freqtimer = 0
+								break	
+							} // disc
+						} // enemy hp
+					} // enemy loop
+			} // freq						
+		}
+		
+		
+	}
+
+	shoot(theta){
+		for (let j=0 ; j <gv.bullets.length;j++){
+			if (gv.bullets[j].stats.bulletSpeed == 0){
+				gv.bullets[j].spawn(this.oX,this.oY,
+											theta,
+											this.stats,this.special)
+				break;
+			}
+		} // bullet loop
+	}
+	
+	onClick(){
+		let dist = disc(sv.cmouseX, sv.cmouseY, 1, 
+							this.oX, this.oY, sv.block/2)
+		if (dist  <= 0){
+			sv.cmouseX = -255
+			sv.cmouseY = -255
+			dbg.log(this)
+			gv.selected = this
+			gv.menu = 'top'
+			
+		}
+	}
+	
+	render(){
+		let sizeOffset = 10
+		cv.fillStyle = 'rgba(255,255,255,0.1)'
+		cv.fillRect(this.drawX,this.drawY,sv.block,sv.block)
+			
+		if (this.level == 0){
+
+		} else if (this.special.tier !='util') {
+			for (let i=0;i<this.level;i++){
+				cv.strokeStyle = `rgba(${this.special.color},${0.5+0.5*(i/7)})`
+				strokeRotRect(this.drawX+sizeOffset/2,this.drawY+sizeOffset/2,sv.block-sizeOffset,sv.block-sizeOffset, i*Math.PI*2/7)
+					
+			}
+			// reload indicator
+			let col = '155,155,155'
+			switch (this.special.tier){
+				case 'util': col = '100,255,100' 
+				break
+				case 'magic': col = '100,100,255' 
+				break
+				case 'rare': col = '235,235,100' 
+				break
+				case 'legendary': col = '255,180,50' 
+				break
+				case 'ascended': col = '255,40,100'
+				break
+			}
+				cv.fillStyle = `rgba(${col}, ${this.stats.frequency*(this.freqtimer/1000)})`
+			// freq indicator
+			fillRotRect(this.drawX+sizeOffset*1.5,this.drawY+sizeOffset*1.5,sv.block-sizeOffset*3,sv.block-sizeOffset*3, Math.PI*this.stats.frequency/2*(this.freqtimer/1000))
+				
+		} else {
+			if (this.special.type == 'ManaTower'){
+				let col = '100,100,100'
+				for (let i=0;i<this.level;i++){
+					cv.strokeStyle = `rgba(${col},${0.5+0.5*(i/this.level)})`
+					strokeRotRect(this.drawX+sizeOffset/2,this.drawY+sizeOffset/2,sv.block-sizeOffset,sv.block-sizeOffset, i*Math.PI*2/this.level*gv.timer/1000)
+				}
+				col = '50,50,240'
+				cv.fillStyle = `rgba(${col}, ${Math.sin(gv.timer/100)})`
+				cv.fillRect(this.drawX+sizeOffset*1.5, this.drawY+sizeOffset*1.5, sv.block-sizeOffset*3, sv.block-sizeOffset*3)
+			}
+		}
+	}
+	
+	buildNormal(){
+		if (gv.gold >= this.price){
+			let r = Math.floor(Math.random()*200)+56
+			let g = Math.floor(Math.random()*200)+56
+			let b = Math.floor(Math.random()*200)+56
+				
+			this.special.color = `${r},${g},${b}`
+			
+			// randomly assign
+
+			let rand = Math.floor(Math.random()*gv.special.types.normal.length)
+			let type = gv.special.types.normal[rand]
+			this.special.tier = 'normal'
+			this.special.type = type
+			this.stats = getStat(type)
+			this.setUpval()
+			this.level = 1
+			this.recalculatePrice()
+			gv.gold-= this.price
+			textPopUp(`-${this.price} G` ,sv.width- sv.padding*2,sv.padding*3,'random')	
+			
+			this.originalCritRate = this.stats.critRate
+			
+			gv.menu = 'top'
+		} else {
+			textPopUp(strings.popup_nogold[lang],sv.mouseX,sv.mouseY,'random')
+		}
+		
+	}
+
+	
+	
+	merge(){
+		for (let i=0; i< gv.towers.length;i++){
+			if (this.special.tier != 'ascended' && this != gv.towers[i] && this.special.type == gv.towers[i].special.type){
+				let worth = Math.floor(((this.upgradeprice-1)*this.upgradeprice/2+(gv.towers[i].upgradeprice-1)*gv.towers[i].upgradeprice/2)/4)
+				
+				gv.gold += worth
+				textPopUp(`+${worth} G`,sv.width- sv.padding*2,sv.padding*3,'random')	
+				if (this.special.tier == 'normal'){
+					let rand = Math.floor(Math.random()*gv.special.types.magic.length)
+					let type = gv.special.types.magic[rand]
+					this.special.tier = 'magic'
+					this.special.type = type
+					
+				} else if (this.special.tier == 'magic'){
+					let rand = Math.floor(Math.random()*gv.special.types.rare.length)
+					let type = gv.special.types.rare[rand]
+					this.special.tier = 'rare'
+					this.special.type = type					
+					
+				} else if (this.special.tier == 'rare'){
+					let rand = Math.floor(Math.random()*gv.special.types.legendary.length)
+					let type = gv.special.types.legendary[rand]
+					this.special.tier = 'legendary'
+					this.special.type = type				
+				
+				} else if (this.special.tier == 'legendary'){
+					let rand = Math.floor(Math.random()*gv.special.types.ascended.length)
+					let type = gv.special.types.ascended[rand]
+					this.special.tier = 'ascended'
+					this.special.type = type
+
+				}
+				
+				
+				
+				this.stats = getStat(this.special.type)
+				
+				this.level = 1
+				this.setUpval()
+				this.recalculatePrice()
+				gv.towers[i].resetStats()
+				this.originalCritRate = this.stats.critRate
+				gv.menu = 'top'
+				break
+			}
+		}
+		textPopUp(strings.popup_cannot[lang],sv.mouseX,sv.mouseY,'random')
+		// nop
+	}
+	setUpval(){
+		for (key in this.stats){
+			this.upval[key] = this.stats[key]*0.034
+		}
+		
+	}
+	
+	
+	upgrade(){
+		if (this.level == 7){
+			textPopUp(strings.max[lang],sv.mouseX,sv.mouseY,'random')
+			return
+		}
+			
+		
+		if (this.upgradeprice <= gv.gold) { // 10까지만
+			this.level++
+			gv.gold-= this.upgradeprice
+			textPopUp(`-${this.upgradeprice} G`, sv.width- sv.padding*2,sv.padding*3,'random')			
+			
+			
+			for (key in this.upval)	
+				this.stats[key] += this.upval[key]
+
+			this.originalCritRate = this.stats.critRate
+			// price
+			this.recalculatePrice()
+		} else {
+			textPopUp(strings.popup_nogold[lang],sv.mouseX,sv.mouseY,'random')
+		}
+	}
+	
+	buildSpecial(type){
+		if (this.specialprice[type] <= gv.gold){
+			
+			gv.gold -= this.specialprice[type]
+			textPopUp(`-${this.specialprice[type]} G`,sv.width- sv.padding*2,sv.padding*3,'random')	
+			
+			this.stats = {}
+			this.special.tier = 'util'
+			this.special.type = type
+			this.recalculatePrice()
+			this.level = 7
+			switch (type){
+				case 'ManaTower':
+					gv.maxmana += 5
+				break
+			}
+			gv.menu= 'top'
+		} else {
+			textPopUp(strings.popup_nogold[lang],sv.mouseX,sv.mouseY,'random')
+		}
+		
+	}
+	
+	recalculatePrice(){
+		// ????
+		this.price = 20
+		this.upgradeprice = this.level
+		
+		
+		switch (this.special.tier){
+			case 'util':
+				this.sellprice = this.specialprice[this.special.type]
+			break
+			case 'normal': this.sellprice = 10
+			break
+			case 'magic': this.sellprice = 20
+			break
+			case 'rare': this.sellprice = 40
+			break
+			case 'legendary': this.sellprice = 80
+			break
+			case 'ascended': this.sellprice = 160
+		}
+		this.sellprice += (this.upgradeprice-1)*this.upgradeprice/2
+		this.sellprice /= 2
+		this.sellprice = Math.floor(this.sellprice)
+	}
+	
+	sell(){
+		this.recalculatePrice()
+		gv.gold+= this.sellprice
+		textPopUp(`+${this.sellprice} G`,sv.width- sv.padding*2,sv.padding*3, 'random')
+		
+		switch (this.special.type){
+			case 'ManaTower': gv.maxmana -= 5
+				gv.mana = Math.max(0, gv.mana-5)
+			break
+		}
+		
+		this.resetStats()
+		this.recalculatePrice()
+	}
+}
+
+// PATH
+class Path {
+	constructor(x,y){
+		this.x = x
+		this.y = y
+		this.drawX = x*sv.block
+		this.drawY = y*sv.block
+		this.oX = this.drawX+sv.block/2
+		this.oY = this.drawY+sv.block/2
+		this.border = [0,0,0,0]
+		this.flag=""
+	}
+	
+	render(){
+		cv.strokeStyle='rgb(255,255,255)'
+		
+		// is there a neighboring path?
+
+		if (this.border[0] || !gv.paths[`${this.x},${this.y+1}`]){
+			// down
+			cv.strokeRect(this.drawX,this.drawY+sv.block,sv.block,0)
+			this.border[0] = 1
+		}
+		
+		if (this.border[1] ||  !gv.paths[`${(this.x+1)},${this.y}`] ){
+			// right
+			cv.strokeRect(this.drawX+sv.block,this.drawY,0,sv.block)
+			this.border[1] = 1
+		}
+		
+		if (this.border[2] || !gv.paths[`${this.x},${this.y-1}`]){
+			// on up
+			cv.strokeRect(this.drawX, this.drawY,sv.block,0)
+			this.border[2] = 1
+		}
+		
+		if (this.border[3] || !gv.paths[`${(this.x-1)},${this.y}`]){
+			// left
+			
+			cv.strokeRect(this.drawX,this.drawY,0,sv.block)
+			this.border[3] = 1
+		}
+		
+		if (this.flag !="")
+			{
+				cv.font = "16px Arial"
+				cv.textAlign = "center"
+				cv.fillStyle = 'rgb(255,255,255)'
+				cv.fillText(this.flag,this.oX,this.oY)
+			}
+	}
+	
+	setFlag(str){this.flag = str}
+	
+}
+
+class Bullet{
+	constructor(i){
+		this.kill() 
+		this.id = i
+	}
+	
+	update(){
+		if (this.stats.bulletSpeed > 0){
+			this.timer -= gv.delta
+			if (this.timer <0 || sv.gamewidth < this.oX || sv.gameheight < this.oY ){
+				this.kill()
+			}
+			
+			this.oX += this.dx
+			this.oY += this.dy
+			
+			// SPECIAL UPDATE
+			switch (this.special.type){
+				case 'SnowBall':
+					this.size += gv.delta/40
+					this.stats.range = 2.0*this.size/sv.block
+					this.stats.damage += this.stats.damage*gv.delta/5000
+				break
+				case 'FlameThrower':
+					this.size += gv.delta/50
+				break
+				case 'SniperElite':
+					if (this.timer2 <= 0){
+						showSplash(this.oX, this.oY, this.size, this.special.color)
+						this.timer2 = 50
+					} else {
+						this.timer2 -= gv.delta
+					}
+				break
+				case 'MagnumShot':
+					if (this.timer2 <= 0){
+						showSplash(this.oX, this.oY, this.size, this.special.color)
+						this.timer2 = 50
+					} else {
+						this.timer2 -= gv.delta
+					}
+				break
+				case '8-Guided':
+					if (this.timer2 > 0)
+						this.timer2 -= gv.delta
+					for (let i=0; i< gv.enemies.length; i++){
+						if (gv.enemies[i].hp >0){
+							if ( disc(this.oX, this.oY, this.stats.range*sv.block/2,
+								gv.enemies[i].oX, gv.enemies[i].oY, gv.enemies[i].radius*sv.block)<= 0 ){
+									let theta = Math.atan2((gv.enemies[i].oY-this.oY),(gv.enemies[i].oX-this.oX))
+									let speed = gv.delta*this.stats.bulletSpeed/10 * (0.5+0.5*(1-this.timer/this.timerSetup))
+									this.dx = this.odx*(this.timer2/this.timerSetup2) + speed*Math.cos(theta)*(1-this.timer2/this.timerSetup2)
+									this.dy = this.ody*(this.timer2/this.timerSetup2) + speed*Math.sin(theta)*(1-this.timer2/this.timerSetup2)
+							}
+						}
+					}
+				break
+				case 'GOD':
+					this.stats.range = this.radius*(this.timer/this.timerSetup)
+					if (this.timer2 <= 0){
+						splash(this.oX, this.oY, this.stats, this.special)
+						this.timer2 = 100
+					} else {
+						this.timer2 -= gv.delta
+					}
+				break
+				case 'DiscoBall':
+					if (this.timer2 <=0){
+						let r = Math.floor(Math.random()*200)+56
+						let g = Math.floor(Math.random()*200)+56
+						let b = Math.floor(Math.random()*200)+56
+										
+						this.special.color = `${r},${g},${b}`
+					
+						for (let i=0; i< gv.enemies.length; i++){
+							if (gv.enemies[i].hp >0){
+								if ( disc(this.oX, this.oY, this.stats.range*sv.block,
+									gv.enemies[i].oX, gv.enemies[i].oY, gv.enemies[i].radius*sv.block)<= 0 ){
+									let theta = Math.atan2((gv.enemies[i].oY-this.oY),(gv.enemies[i].oX-this.oX))
+									r = Math.floor(Math.random()*200)+56
+									g = Math.floor(Math.random()*200)+56
+									b = Math.floor(Math.random()*200)+56
+									this.special.color = `${r},${g},${b}`
+									
+									slash(this.oX,this.oY,this.stats, this.special, theta, 2*Math.PI/180)
+									this.dx = 0
+									this.dy = 0
+								}
+							}
+						}
+						this.timer2 = 50
+					} else {
+						this.timer2 -= gv.delta
+					}
+				
+				break
+			}
+						
+			
+			
+			// hit enemy
+			for (let i=0;i < gv.enemies.length;i++){
+				if (gv.enemies[i].hp >0){
+					if ( disc(this.oX, this.oY, this.size,
+								gv.enemies[i].oX, gv.enemies[i].oY, gv.enemies[i].radius*sv.block) <= 0 ) {
+						
+						// special effect
+						let uniqueid = this.special.color+':'+this.id // 
+						// this is to fix tower that shoots out multiple bullets which penetrate not working properly
+						let dmg = calculateDamage(this.stats.damage, this.stats.critRate)
+						switch (this.special.type){
+							//magic: ['4-Way', 'Machinegun','Sniper', 'Earthquake', 'Bomb', 'Sword'],
+							case 'Bomb':
+								splash(this.oX, this.oY, this.stats, this.special)
+								this.kill() 
+							break
+						//['8-Way','FlameThrower', 'SniperElite','RapidShot', 'GreatSword','FrozenNova','SnowBall'],					
+							case 'FlameThrower':
+								dmg = calculateDamage(this.stats.damage*(this.timer/this.timerSetup), this.stats.critRate)
+								if (!gv.enemies[i].statusTimer[uniqueid]){
+									gv.enemies[i].statusTimer[uniqueid] = {}
+									gv.enemies[i].statusTimer[uniqueid].counter = 300
+									gv.enemies[i].takeDamage(dmg)
+								} else {
+									if (gv.enemies[i].statusTimer[uniqueid].counter <= 0) {
+										gv.enemies[i].statusTimer[uniqueid].counter = 300
+										gv.enemies[i].takeDamage(dmg)
+									}
+								}
+							break
+							case 'RapidShot':
+								gv.enemies[i].statusTimer.chill.counter += 100
+								gv.enemies[i].statusTimer.chill.set += 100
+								dmg = calculateDamage(this.stats.damage, this.stats.critRate)
+								gv.enemies[i].takeDamage(dmg)
+								this.kill()
+							break
+							case 'SniperElite':
+								dmg = calculateDamage(this.stats.damage, this.stats.critRate)
+								if (!gv.enemies[i].statusTimer[uniqueid]){
+									gv.enemies[i].statusTimer[uniqueid] = {}
+									gv.enemies[i].statusTimer[uniqueid].counter = 300
+									gv.enemies[i].takeDamage(dmg)
+								} else {
+									if (gv.enemies[i].statusTimer[uniqueid].counter <= 0) {
+										gv.enemies[i].statusTimer[uniqueid].counter = 300
+										gv.enemies[i].takeDamage(dmg)
+									}
+								}
+							break
+							case 'SnowBall':
+								splash(this.oX, this.oY, this.stats, this.special)
+								this.kill() 
+							break			
+							// LEGENDARY
+
+							case 'MagnumShot':
+								
+								dmg = calculateDamage(this.stats.damage, this.stats.critRate)
+								if (!gv.enemies[i].statusTimer[uniqueid]){
+									gv.enemies[i].statusTimer[uniqueid] = {}
+									gv.enemies[i].statusTimer[uniqueid].counter = 300
+									gv.enemies[i].takeDamage(dmg)
+									gv.enemies[i].statusTimer.chill.counter += 100
+									gv.enemies[i].statusTimer.chill.set += 100
+								} else {
+									if (gv.enemies[i].statusTimer[uniqueid].counter <= 0) {
+										gv.enemies[i].statusTimer[uniqueid].counter = 300
+										gv.enemies[i].takeDamage(dmg)
+										gv.enemies[i].statusTimer.chill.counter += 100
+										gv.enemies[i].statusTimer.chill.set += 100
+									}
+								}
+							break
+							case 'GOD':
+							break
+							case 'DiscoBall':
+
+							break
+							case 'Nuke':
+								splash(this.oX, this.oY, this.stats, this.special)
+								this.kill() 
+							break	
+							default:
+								gv.enemies[i].takeDamage(dmg)
+								this.kill() 		
+							break
+							
+						}						
+					}
+				}
+			}
+			// or reaches target position
+			
+			
+		}
+	}
+	
+	render(){
+		if (this.stats.bulletSpeed >0){
+			cv.beginPath()
+			cv.fillStyle= `rgba(${this.special.color},0.8)`
+			
+			// SPECIAL RENDER
+			switch (this.special.type){
+				case 'FlameThrower':
+					cv.fillStyle= `rgba(${this.special.color}, ${(this.timer)/this.timerSetup})`
+				break
+			}
+			
+			cv.arc(this.oX,this.oY, this.size,0,Math.PI*2)
+			cv.fill()
+			cv.closePath()
+		}
+	}
+	
+	kill(){
+		this.oX = -255 
+		this.stats = {}
+		this.stats.bulletSpeed = 0
+	}
+	
+	spawn(oX,oY, theta,stats, special){
+		this.oX = oX
+		this.oY = oY
+		this.theta = theta
+		this.stats = {}
+		for (key in stats)
+			this.stats[key] = stats[key] 
+		this.special = {}
+		for (key in special)
+			this.special[key] = special[key] 
+		
+		this.size = this.stats.range
+		
+		let speed = gv.delta*this.stats.bulletSpeed/10
+		this.timer = sv.height*10/this.stats.bulletSpeed
+		// Speical Init
+		switch (this.special.type){
+			//['Basic','Rifle', 'Marksman', 'Pulse', 'Shotgun', 'dagger'],
+			case 'Rifle':
+				theta += (Math.random()-0.5)*Math.PI/6.0 // 30 deg
+			break
+			case 'Shotgun':
+				theta += (Math.random()-0.5)*Math.PI/6.0
+				speed += (Math.random()-0.5)*speed/10
+			break
+			case 'Machinegun':
+				theta += (Math.random()-0.5)*Math.PI/6.0 // 30 deg
+			break
+			case 'Marksman':
+				this.size = 2.0
+			break
+			case 'Sniper':
+				this.size = 2.0
+			break
+			case 'Bomb':
+				this.size = 8.0
+				this.stats.range
+			break
+		//['8-Way','FlameThrower', 'SniperElite','RapidShot', 'GreatSword','FrozenNova','SnowBall'],	
+			case 'SniperElite':
+				this.size = 2.0
+				this.timer2 = 50
+			break
+			case 'FlameThrower':
+				this.size = 2
+				this.timer = (this.stats.range)*600
+				theta += (Math.random()-0.5)*Math.PI/6.0
+			break
+			case 'RapidShot':
+				theta += (Math.random()-0.5)*Math.PI/9.0
+				speed += (Math.random()-0.5)*speed/10
+			break
+			case 'SnowBall':
+				this.size = 2
+				// range change according to size
+			break			
+			// LEGENDARY
+			case 'MagnumShot':
+				theta += (Math.random()-0.5)*Math.PI/10.0
+				speed += (Math.random()-0.5)*speed/10
+				this.timer2 = 50
+			break
+			case 'GOD':
+				this.radius = this.stats.range*1.5
+				this.timer2 = 100
+				// range change according to time
+			break
+			case '8-Guided':
+				this.timer2 = 200
+				this.timerSetup2 = this.timer2
+			break
+			case 'Nuke':
+				this.size = 12.0
+				this.stats.range *= 1.5
+			break
+			case 'DiscoBall':
+				this.size = 12.0
+				this.timer2 = 50
+			break
+		}
+		
+		this.dx = speed*Math.cos(theta)
+		this.dy = speed*Math.sin(theta)
+		this.odx = speed*Math.cos(theta)
+		this.ody = speed*Math.sin(theta)
+		
+		this.timerSetup = this.timer
+	}
+	
+	
+}
+
+const splash=(oX, oY, stats, special)=>{
+		let color = special.color
+		let radius = stats.range*sv.block
+		
+		showSplash(oX,oY, radius, color)
+		for (let i=0 ; i< gv.enemies.length;i++){
+				if (gv.enemies[i].hp > 0){
+					let d  =disc(oX, oY, radius,
+								gv.enemies[i].oX, gv.enemies[i].oY, gv.enemies[i].radius*sv.block)
+					if ( d <= 0 ) {
+					
+						let dist = Math.sqrt(-d)/(radius+gv.enemies[i].radius)
+						//inverse proportional to distance
+						
+						switch (special.type){						
+							case 'FrozenNova':
+								gv.enemies[i].statusTimer.chill.counter += 900
+								gv.enemies[i].statusTimer.chill.set += 900
+							break
+							case 'Nuke':
+								gv.enemies[i].statusTimer.poison.round += 2 
+							break
+						}
+						let dmg = calculateDamage(stats.damage*dist, stats.critRate)
+						gv.enemies[i].takeDamage(dmg)
+						
+					}
+				}
+			}
+}
+
+
+//       neg
+//       ----)
+//       pos
+// phi side angles
+const slash = (oX,oY,stats, special, theta, phi)=>{
+	let start = (theta - phi)
+	let end = (theta + phi)
+	
+	
+	let color = special.color
+	let radius = stats.range*sv.block
+	
+	
+	showSlash(oX,oY, radius , start, end , color)
+	for ( let i=0; i< gv.enemies.length;i++){
+		if (gv.enemies[i].hp > 0){
+			let d = disc(oX, oY, radius,
+								gv.enemies[i].oX, gv.enemies[i].oY, gv.enemies[i].radius*sv.block)
+			// new theta for everyone
+			let newTheta = Math.atan2((gv.enemies[i].oY-oY),(gv.enemies[i].oX-oX))
+			if (d <= 0 && (start <= newTheta && newTheta <= end)){
+				
+				let dmg = calculateDamage(stats.damage, stats.critRate)
+				gv.enemies[i].takeDamage(dmg)
+			}			
+		}
+	}
+	
+}
+////////////////////////////////////////////////////////
+// MAGICS (some are innate in other class
+//////////////////////////////////////////////////////
+
+const magic = (name)=>{
+	if (gv.special.magics[name] <= gv.mana){
+		gv.mana -= gv.special.magics[name]
+		switch (name){
+			case 'lotto': 
+				let rand = Math.floor(Math.random()*3)+1
+				gv.gold += rand
+				textPopUp(`+${rand}G`,sv.mouseX, sv.mouseY,'random')
+			break
+			case 'blizzard':
+				sv.flashcol = '50,50,255'
+				sv.flashtimer = sv.flashtimerSetup
+				for (let i=0; i< gv.enemies.length;i++){
+					if (gv.enemies[i].hp > 0){
+						gv.enemies[i].statusTimer.chill.counter += 4000
+						gv.enemies[i].statusTimer.chill.set += 4000
+					}
+				}
+				
+			break
+			case 'stop':
+				sv.flashcol = '255,255,255'
+				sv.flashtimer = sv.flashtimerSetup		
+				for (let i=0; i< gv.enemies.length;i++){
+					if (gv.enemies[i].hp > 0){
+						gv.enemies[i].statusTimer.stop.counter += 4000
+					}
+				}
+			break
+			case 'critbuff':
+				sv.flashcol = '230,50,50'
+				sv.flashtimer = sv.flashtimerSetup
+				gv.bufftimer += 3000
+				gv.bufftype = 'critbuff'
+			break
+			case 'quest':
+				sv.flashcol = '50,50,50'
+				sv.flashtimer = sv.flashtimerSetup
+				for (let i=0;i<gv.enemies.length;i++){
+					if (gv.enemies[i].hp <= 0){
+						gv.enemies[i].setFlag('BONUS')
+						gv.enemies[i].spawn(25*gv.wave/3, 1.5 ,0.3)
+						break
+					}
+				}
+			break
+		}
+	} else {
+		textPopUp(`${strings.popup_nomana[lang]}`,sv.mouseX, sv.mouseY,'random')
+	}
+}
+
+
+
+/////////////////////////////////////////////////
+//	Input
+//////////////////////////////////////////////////
+window.onmousedown = (e)=>{
+	sv.cmouseX = e.offsetX
+	sv.cmouseY = e.offsetY
+
+	if (gv.pause){
+			gv.pause = false
+			c.hidden = false
+			p.hidden = true
+		}
+	dbg.log(e)
+	if (gv.life > 0){
+		
+		
+		for (let i =0; i< gv.towers.length;i++)
+			gv.towers[i].onClick()
+		
+		if (gv.selected != null) {
+			if (gv.menu == 'magic'){
+					
+					gv.buttons[0].onClick(()=>{
+						magic('lotto')
+					})
+				
+					gv.buttons[1].onClick(()=>{
+						magic('blizzard')
+					})
+				
+					gv.buttons[2].onClick(()=>{
+						magic('stop')
+					})
+					
+					gv.buttons[3].onClick(()=>{
+						magic('critbuff')
+					})			
+					
+					gv.buttons[4].onClick(()=>{
+						magic('quest')
+					})				
+					
+					gv.buttons[5].onClick(()=>{
+						gv.menu= 'top'
+					})
+			}
+			if (gv.menu == 'top'){
+				gv.buttons[4].onClick(()=>{
+					gv.menu = 'magic'					
+				})			
+			}
+			
+		
+			if (gv.selected.level == 0){
+				if (gv.menu == 'top'){
+					gv.buttons[3].onClick(()=>{
+						gv.menu = 'build'
+						
+					})
+
+				} else if (gv.menu == 'build'){
+					gv.buttons[0].onClick(()=>{
+						gv.selected.buildNormal()
+					})
+					
+					gv.buttons[1].onClick(()=>{
+						gv.selected.buildSpecial('ManaTower')
+					})
+
+					gv.buttons[5].onClick(()=>{
+						gv.menu= 'top'
+					})
+				} 
+				
+			} else {
+				if (gv.menu == 'top'){
+					if (gv.selected.special.tier != 'util'){
+						gv.buttons[0].onClick(()=>{
+							gv.selected.upgrade()
+						})
+							
+						gv.buttons[1].onClick(()=>{
+							gv.selected.merge()
+						})
+						
+					} 
+					gv.buttons[5].onClick(()=>{
+							gv.selected.sell()
+					})
+				}
+			}
+		
+		}
+	}
+
+}	
+
+window.onmousemove = (e) =>{
+	sv.mouseX = e.offsetX
+	sv.mouseY = e.offsetY
+}
+let langcon = 0
+let dmgcon = 0
+window.onkeydown = (e)=>{
+	console.log(e.keyCode)
+	if (e.keyCode == 76){
+		langcon = (langcon+1)%langs.length
+		lang = langs[langcon]
+	} else if (e.keyCode == 68){
+		dmgcon = (dmgcon+1)%gv.dmgmodes.length
+		gv.dmgmode = gv.dmgmodes[dmgcon]
+	
+	} else if (e.keyCode == 66){ // B
+		
+
+	} else if (e.keyCode == 123)	{ // space
+		
+	
+	} else{
+		if (gv.pause){
+			gv.pause = false
+			c.hidden = false
+			p.hidden = true
+		}else{
+			c.hidden = true
+			p.hidden = false
+			gv.pause = true
+			
+		}
+	}
+}
+window.onmouseup = (e)=>{
+
+}
+
+///////////////////////////////////////////////////////////
+// UI class + Helper Function
+//////////////////////////////////////////////////////////
+const flash=(col)=>{
+	if (sv.flashtimer > 0){
+		sv.flashtimer -= gv.delta
+		cv.fillStyle = `rgba(${col}, ${sv.flashtimer/sv.flashtimerSetup})`
+		cv.fillRect(0,0,sv.gamewidth,sv.gameheight)
+	}
+}
+
+
+class BoxButton{
+	constructor(x,y,size){
+		this.x = x
+		this.y = y
+		this.size = size
+	}
+	
+	render(txt){
+		let tempX = this.x
+		let tempY = this.y
+		cv.strokeStyle = 'rgb(200,200,200)'
+		cv.strokeRect(tempX,tempY,this.size,this.size)
+		
+		let fontsize = this.size/5 // 6 letter?
+		let width = txt.length*fontsize
+		tempX += this.size/2
+		cv.fillStyle = 'rgb(255,255,255)'
+		cv.font = `${fontsize}px Arial`
+		cv.textAlign = "center"
+		let texts = txt.split(' ')
+		//for (let i=0;i< txt.length/6;i++){
+		//	texts.push(txt.substr(i*6,6))
+		//}
+		let vspace = this.size/(texts.length+1)
+		for (let i=0; i< texts.length;i++){
+			tempY+=vspace
+			cv.fillText(texts[i],tempX,tempY)
+		}
+	}
+	
+	onClick(callback){
+		let tempX = this.x
+		let tempY = this.y
+		if (sv.cmouseX > tempX && sv.cmouseX < tempX+this.size) {
+			if (sv.cmouseY > tempY && sv.cmouseY < tempY+this.size){
+				callback()
+					
+				sv.cmouseX = -255
+				sv.cmouseY = -255
+			}
+		}
+	}
+	
+	onHover(text){
+		let tempX = this.x
+		let tempY = this.y
+
+		let fontsize = this.size/4 // 6 letter?
+		cv.font = `${fontsize} Arial`
+		let width = 17*fontsize
+		let texts = text.split('  ')
+		
+		let height = fontsize * texts.length * 2
+		let vspace = height/(texts.length+1)
+		if (sv.mouseX > tempX && sv.mouseX < tempX+this.size) {
+			if (sv.mouseY > tempY && sv.mouseY < tempY+this.size){
+				
+				
+				cv.textAlign = "start"
+				cv.strokeStyle = 'rgb(200,200,200)'
+				cv.strokeRect(sv.mouseX-width,sv.mouseY - height, width, height)			
+				cv.fillStyle = 'rgb(20,20,20)'
+				cv.fillRect(sv.mouseX-width,sv.mouseY - height, width, height)
+				for (let i=0; i< texts.length;i++){
+					cv.fillStyle = 'rgb(255,255,255)'
+					cv.fillText(texts[i],sv.mouseX-width+5, sv.mouseY - height + vspace*(i+1) +5)
+				}
+
+			}
+		}
+	}
+	
+}
+
+
+/// FX
+class TextPopUp {
+	constructor(){
+		this.timer = -1
+	}
+	
+	update(){
+		if (this.timer > 0){
+			this.timer -= gv.delta
+			this.y -= 1
+		} 
+	}
+	
+	render(){
+		if (this.timer > 0){
+			cv.textAlign = "center"
+			if (this.color == 'random') {
+				cv.font = "16px Arial"	
+				cv.fillStyle = `rgba(${128+Math.floor(Math.sin(this.timer)*120)}, ${128+Math.floor(Math.cos(this.timer)*120)}, ${128+Math.floor(Math.sin(this.timer)*120)},${this.timer/this.timerSetup})`
+							
+			}else {
+				cv.font = "18px Arial"
+				cv.fillStyle = `rgba(0,0,0,${this.timer/this.timerSetup})`
+				cv.fillText(this.str,this.x-1.0,this.y-1.0)
+				cv.font = "16px Arial"	
+				cv.fillStyle = `rgba(${this.color},${this.timer/this.timerSetup})`
+			
+			}
+			cv.fillText(this.str,this.x,this.y)
+			
+		
+		}
+	}
+	
+	spawn(str,x,y, color){
+		this.str = str
+		this.x = x
+		this.y = y
+		this.color = color
+		this.timerSetup = 800
+		this.timer=this.timerSetup
+	}
+}
+
+const textPopUp = (str,x,y,color)=>{
+	for (let i=0;i<gv.FXs.popup.length;i++)
+		if (gv.FXs.popup[i].timer <= 0){
+			gv.FXs.popup[i].spawn(str,x,y,color)
+			break
+		}
+}
+
+class SplashIndicator {
+	constructor(){
+		this.timer = -1
+		
+	}
+	
+	update(){
+		if (this.size > 0 && this.timer > 0){
+			this.timer -= gv.delta
+			this.size = this.maxSize*(1-this.timer/this.timerSetup)
+		}
+		
+	}
+	
+	render(){
+		if (this.size > 0 && this.timer > 0){
+			cv.beginPath()
+			cv.strokeStyle = `rgba(${this.color},${0.4+0.6*(this.timer/this.timerSetup)})`
+			cv.arc(this.x, this.y, this.size,0,Math.PI*2)
+			cv.stroke()
+			cv.closePath()
+		}
+	}
+	
+	spawn(x,y, size, color){
+		this.x = x	
+		this.y = y
+		this.maxSize=size
+		this.size = 0.1
+		this.color = color
+		this.timerSetup = 300
+		this.timer = this.timerSetup
+	}
+	
+}
+
+const showSplash = (x,y, size , color)=>{
+	for (let i=0;i<gv.FXs.splash.length;i++)
+		if (gv.FXs.splash[i].timer <= 0){
+			gv.FXs.splash[i].spawn(x,y,size,color)
+			break
+		}
+}
+
+class SlashIndicator {
+	constructor(){
+		this.timer = 0
+		this.timer2 =0
+	}
+	update(){
+		if (this.timer > this.timerSetup/2){
+			this.timer -= gv.delta
+		} else {
+			if (this.timer2 > 0){
+				this.timer2 -= gv.delta
+				this.timer -= gv.delta
+			}
+		}
+		if (this.timer <0)
+			this.timer = 0
+		if (this.timer2 <0)
+			this.timer2 =0
+	}
+	
+	render(){
+		
+		if (this.timer2 >0){
+			cv.beginPath()
+			cv.fillStyle = `rgba(${this.color},${0.2+0.4*(1-this.timer2/this.timerSetup)})`
+			cv.moveTo(this.x,this.y)
+			cv.arc(this.x, this.y, this.size, this.start-this.phi*(this.timer/this.timerSetup), this.end+this.phi*(1-this.timer2/this.timerSetup))
+			cv.fill()
+			cv.closePath()
+		}
+	}
+	
+	spawn(x,y, size, start, end, color){
+		this.x = x	
+		this.y = y
+		this.size = size
+		this.color = color
+		this.timerSetup = 150
+		this.timer = this.timerSetup
+		this.timer2 = this.timerSetup
+		
+		this.start = start
+		this.end = end
+		this.phi = start-end
+		
+	}
+}
+
+const showSlash = (x,y, size , start, end, color)=>{
+	for (let i=0;i<gv.FXs.slash.length;i++)
+		if (gv.FXs.slash[i].timer2 <= 0){
+			gv.FXs.slash[i].spawn(x,y,size, start,end,color)
+			break
+		}
+}
+
+// HELPER
+const fillRotRect=(x,y,width,height, drad)=>{
+	
+	let tx = x+width/2
+	let ty = y+height/2
+	let r = Math.sqrt(Math.pow(tx,2) + Math.pow(ty,2))
+	let trad = Math.atan(ty/tx)
+	let dx = r*Math.cos(trad-drad)
+	let dy = r*Math.sin(trad-drad)	
+
+	cv.save()
+	cv.rotate(drad)
+	cv.fillRect(dx-width/2,dy-height/2,width,height)
+	cv.restore()
+}
+
+
+const strokeRotRect=(x,y,width,height, drad)=>{
+	
+	let tx = x+width/2
+	let ty = y+height/2
+	let r = Math.sqrt(Math.pow(tx,2) + Math.pow(ty,2))
+	let trad = Math.atan(ty/tx)
+	let dx = r*Math.cos(trad-drad)
+	let dy = r*Math.sin(trad-drad)	
+
+	cv.save()
+	cv.rotate(drad)
+	cv.strokeRect(dx-width/2,dy-height/2,width,height)
+	cv.restore()
+}
+
+const disc = (sx,sy,sr, tx,ty, tr)=>{
+	let ret = Math.pow(sx -tx,2)+Math.pow(sy- ty,2) - Math.pow(sr+tr,2)
+	
+	return ret // in
+}
+
+const ct=(type, wave=-1)=>{
+	gv.selected.special.type = type
+	for (tierlist in gv.special.types){
+		for (let i=0;i<gv.special.types[tierlist].length;i++){
+			if (gv.special.types[tierlist][i] == type){
+				gv.selected.special.tier = tierlist
+				break
+				}
+		}
+	}
+	
+	gv.selected.stats = getStat(type)
+	gv.selected.level = 1
+	gv.selected.originalCritRate = gv.selected.stats.critRate
+	gv.selected.setUpval()
+	
+	if (wave > 0)
+		gv.wave = wave
+	gv.wavetimer = 1
+	gv.gold +=1000
+}
+
+/*
+c.onpointerout =(e)=>{
+		
+		c.hidden = true
+		p.hidden = false
+		gv.pause = true
+
+}
+*/
+</script>
+</html>
