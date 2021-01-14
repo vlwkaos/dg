@@ -360,11 +360,10 @@
         //start
         resetGame()
 
-        //requestAnimationFrame(refresh);
-        setInterval(refresh, d)
+        requestAnimationFrame(refresh);
     }
 
-    const d = 5
+        const d = 15
 
     //---------- Render Loops----------------------
 
@@ -374,7 +373,7 @@
             update()
         render()
 
-        //requestAnimationFrame(refresh);
+        requestAnimationFrame(refresh);
     }
 
 
