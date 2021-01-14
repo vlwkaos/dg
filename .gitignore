@@ -5,3 +5,4 @@ _site/
 _includes/notes_graph.json
 .obsidian
 _notes/_templates
+.vscode

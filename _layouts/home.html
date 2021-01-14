@@ -4,15 +4,4 @@ layout: default
 
 <content>
   {{ content }}
-  <h2>최근에 업데이트 됨!</h2>
-  {% assign timeframe = 604800 %}
-  {% assign sorted_notes = site.notes | sort: "last_modified_at" %}
-  <ul>
-    {% for note in sorted_notes reversed limit:7 %}
-    <li>
-      <a href="{{ note.url }}">{{ note.title }}</a><span
-        style="font-size: 0.8em;">{{ note.last_modified_at | date: "%B %-d, %Y" }}</span>
-    </li>
-    {% endfor %}
-  </ul>
 </content>
