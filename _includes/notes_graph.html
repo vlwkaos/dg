@@ -6,7 +6,7 @@
 
   .nodes circle {
     cursor: pointer;
-    fill: #8b88e6;
+    fill: #0088e6;
     transition: all 0.15s ease-out;
   }
 
@@ -237,6 +237,11 @@
         .attr("x2", (d) => d.target.x)
         .attr("y2", (d) => d.target.y);
     };
+    
+    const week = 7;
+    const date = new Date();
+    const month = getMiliseconds(30);
+    const weekAgo = new Date(date.getTime() - (getMiliseconds(week)));
 
     const restart = () => {
       updateNodeSize();
@@ -248,6 +253,16 @@
         .attr("r", (d) => {
           return nodeSize[d.id];
         })
+        .style("fill", (d) => {
+          const dayDiff = (Date.now() - Date.parse(d.last_modified.replaceAll(/-/g, ' ')))/getMiliseconds(30);
+          // 최근
+          if (dayDiff < 1) {
+            let red = 255 - Math.floor(dayDiff * 255);
+            let hex=red.toString(16); 
+            return `#${hex}88e6`;
+          }
+          return "#0088e6";
+        })
         .on("click", onClick)
         .on("mouseover", onMouseover)
         .on("mouseout", onMouseout)
@@ -256,7 +271,7 @@
       link = link.data(linksData, (d) => `${d.source.id}-${d.target.id}`);
       link.exit().remove();
       link = link.enter().append("line").attr("stroke-width", STROKE).merge(link);
-
+      
       text = text.data(nodesData, (d) => d.label);
       text.exit().remove();
       text = text
@@ -298,6 +313,10 @@
     function shorten(str, maxLen, separator = ' ') {
       if (str.length <= maxLen) return str;
       return str.substr(0, str.lastIndexOf(separator, maxLen)) + '...';
+    }
+    
+    function getMiliseconds(days) {
+      return days * 24 * 60 * 60 * 1000;
     }
   </script>
 </div>
