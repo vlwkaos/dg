@@ -1,6 +1,6 @@
 ---
 layout: home
-title: Home
+title: vlwkaos' Digital Garden
 id: home
 permalink: /
 ---
