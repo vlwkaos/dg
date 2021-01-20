@@ -57,9 +57,16 @@
     let linksData = graphData.edges;
 
     const nodeSize = {};
+    
+    // 가장 최근 업데이트 날짜를 찾는다.
+    let latestModifiedDate = 0;
+    nodesData.forEach(node => {
+      latestModifiedDate = Math.max(latestModifiedDate, parseJekyllDateToMiliseconds(node.last_modified))
+    })
 
     const updateNodeSize = () => {
       nodesData.forEach((el) => {
+        // flux를 계산하여 노드 크기 설정
         let weight =
           3 *
           Math.sqrt(
@@ -164,9 +171,9 @@
 
     const graphWrapper = document.getElementById('graph-wrapper')
     const element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+    graphWrapper.appendChild(element);
     element.setAttribute("width", graphWrapper.clientWidth);
     element.setAttribute("height", window.innerHeight * 0.8);
-    graphWrapper.appendChild(element);
 
     const reportWindowSize = () => {
       element.setAttribute("width", graphWrapper.clientWidth);
@@ -238,11 +245,6 @@
         .attr("y2", (d) => d.target.y);
     };
     
-    const week = 7;
-    const date = new Date();
-    const month = getMiliseconds(30);
-    const weekAgo = new Date(date.getTime() - (getMiliseconds(week)));
-
     const restart = () => {
       updateNodeSize();
       node = node.data(nodesData, (d) => d.id);
@@ -254,7 +256,8 @@
           return nodeSize[d.id];
         })
         .style("fill", (d) => {
-          const dayDiff = (Date.now() - Date.parse(d.last_modified.replaceAll(/-/g, ' ')))/getMiliseconds(30);
+          // 가장 마지막으로 업데이트한 글에서 2주를 기준으로 최근을 정의 
+          const dayDiff = (latestModifiedDate - parseJekyllDateToMiliseconds(d.last_modified))/dayToMiliseconds(14);
           // 최근
           if (dayDiff < 1) {
             let red = 255 - Math.floor(dayDiff * 255);
@@ -315,8 +318,12 @@
       return str.substr(0, str.lastIndexOf(separator, maxLen)) + '...';
     }
     
-    function getMiliseconds(days) {
+    function dayToMiliseconds(days) {
       return days * 24 * 60 * 60 * 1000;
+    }
+    
+    function parseJekyllDateToMiliseconds(string) {
+      return Date.parse(string.replaceAll(/-/g, ' '))
     }
   </script>
 </div>
