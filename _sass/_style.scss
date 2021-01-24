@@ -87,14 +87,14 @@ h6 {
 }
 
 a {
-  transition: background 300ms;
+  transition: background-color 300ms;
   padding: 0 0.1em;
   text-decoration: none;
   border-bottom: 1px solid $color-border;
   color: $color-primary;
   &:hover {
     color: black !important;
-    background: #fffaf1;
+    background-color: #fffaf1;
   }
   &:after {
     position: relative;
@@ -103,9 +103,18 @@ a {
     content: "↗";
     color: #aaaaaa;
   }
-  &.internal-link:after {
-    content: "";
+  &.internal-link {
+    background-color: #efefff;
+    border-color: #8b88e6;
+      &:after {
+        content: "";
+      }
+      &:hover {
+        color: black !important;
+        background-color: #fffaf1;
+      }
   }
+  
 }
 
 *:focus {
@@ -127,6 +136,19 @@ nav {
   @media (min-width: 700px) {
     grid-template-columns: 3fr 1fr;
     grid-template-areas: "content side";
+  }
+  
+  &.special {
+    content {
+      position: initial;
+    }
+    @media (min-width: 700px) {
+       content {
+         position:sticky;
+       }
+      grid-template-columns: 2fr 3fr;
+    }
+    
   }
 
   .gist {

@@ -27,7 +27,7 @@
 ////////////////////////////////////
 //	All Random DEFENSE
 //////////////////////////////////////
-const ver = '2.0.6'
+const ver = '2.0.7'
 const c=document.querySelector('#c')
 const p=document.querySelector('#p')
 const v=document.querySelector('#ver')
@@ -2248,11 +2248,10 @@ window.onmousemove = (e) =>{
 let langcon = 0
 let dmgcon = 0
 window.onkeydown = (e)=>{
-	console.log(e.keyCode)
-	if (e.keyCode == 76){
+	if (e.key == 'l'){
 		langcon = (langcon+1)%langs.length
 		lang = langs[langcon]
-	} else if (e.keyCode == 68){
+	} else if (e.key == 'd'){
 		dmgcon = (dmgcon+1)%gv.dmgmodes.length
 		gv.dmgmode = gv.dmgmodes[dmgcon]
 	

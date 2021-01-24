@@ -1,0 +1,40 @@
+---
+layout: default
+---
+<script>
+  window.onload = () => {
+    const side = document.getElementsByTagName('side')[0];
+    const observer = new IntersectionObserver((entries) => {
+      const ratio = entries[0].intersectionRatio;
+      const boundingRect = entries[0].boundingClientRect;
+      const intersectionRect = entries[0].intersectionRect;
+    }, {
+      root: document.getElementById('notes-entry-container')
+    });
+    observer.observe(side)
+  }
+</script>
+<article>
+  <div>
+    <h1>{{ page.title }}</h1>
+    <time datetime="{{ page.last_modified_at | date_to_xmlschema }}">{% if page.type != 'pages' %}
+      마지막으로 수정됨. {{ page.last_modified_at | date: "%B %-d, %Y" }}
+      {% endif %}
+    </time>
+  </div>
+
+  <div id="notes-entry-container" class="special">
+    <content style="font-size: 0.9em; align-self: baseline; transition: 0.5s; top: 0px;">
+      <h3 style="margin-bottom: 1em">안녕하세요! 박민규입니다.</h3>
+      <div style="display: grid; grid-gap: 1em; grid-template-columns: repeat(1fr);">
+        <p>시각적인 것에 관심이 많은 개발자입니다. 제가 만든 것 일부를 오른쪽에서 확인할 수 있어요.</p> 
+      </div>
+    </content>
+    <side style="max-width: 640px;">
+      {{ content }}
+    </side>
+
+  </div>
+</article>
+
+<hr>

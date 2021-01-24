@@ -506,7 +506,7 @@
             cv.fillText('PAUSE', gamewidth / 2 - 5 * 6, gameheight / 2)
         }
 
-        if (comboTimer > 0) {
+        if (comboTimer > 0 && combo > 0) {
             cv.fillStyle = 'rgb(255,255,0)'
             cv.fillText('Combo ' + combo + "!!!", gamewidth / 2 - 52, gameheight / 2 - 100)
             comboTimer -= 10
