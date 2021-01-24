@@ -257,7 +257,7 @@
         })
         .style("fill", (d) => {
           // 가장 마지막으로 업데이트한 글에서 2주를 기준으로 최근을 정의 
-          const dayDiff = (latestModifiedDate - parseJekyllDateToMiliseconds(d.last_modified))/dayToMiliseconds(14);
+          const dayDiff = (latestModifiedDate - parseJekyllDateToMiliseconds(d.last_modified))/dayToMiliseconds(60);
           // 최근
           if (dayDiff < 1) {
             let red = 255 - Math.floor(dayDiff * 255);
