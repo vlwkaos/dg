@@ -2,7 +2,6 @@
 title: 'vlwkaos'
 author: 'vilwkaos'
 layout: vlwkaos
-abouttext: '안녕'
 published: true
 ---
 
@@ -36,7 +35,7 @@ published: true
 
 ### <a href="https://play.google.com/store/apps/details?id=com.lumibottle.game">소다람쥐(Sodaricus)</a> (2017)
 
-다람쥐가 베이컨을 타고 우주를 누비며 소다병을 던진다. 온갖 짜증나는 게임 요소를 섞어서 만들어 낸 원터치 아케이드 게임.
+다람쥐가 베이컨을 타고 우주를 누비며 소다병을 던진다. 온갖 짜증나는 게임 요소를 섞어서 만들어 낸 원터치 아케이드 게임.
 
 <p align='center'>
 <img loading='lazy' src='/assets/sodaricus_ex.gif'/>

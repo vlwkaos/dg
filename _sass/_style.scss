@@ -133,7 +133,7 @@ nav {
     "content"
     "side";
   word-break: break-word;
-  @media (min-width: 700px) {
+  @media (min-width: 768px) {
     grid-template-columns: 3fr 1fr;
     grid-template-areas: "content side";
   }
@@ -142,7 +142,7 @@ nav {
     content {
       position: initial;
     }
-    @media (min-width: 700px) {
+    @media (min-width: 768px) {
        content {
          position:sticky;
        }
@@ -186,7 +186,7 @@ nav {
 code {
   white-space: pre-wrap;
   background: #f5f5f5;
-  padding: 0.1em 0.2em;
+  // padding: 0.1em 0.2em;
   border-radius: 4px;
   max-width: 80vw;
 }
