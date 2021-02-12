@@ -1,49 +1,13 @@
-<style>
-  .links line {
-    stroke: #ccc;
-    opacity: 0.5;
-  }
-
-  .nodes circle {
-    cursor: pointer;
-    fill: #0088e6;
-    transition: all 0.15s ease-out;
-  }
-
-  .text text {
-    cursor: pointer;
-    fill: #333;
-    text-shadow: -1px -1px 0 #fafafabb, 1px -1px 0 #fafafabb, -1px 1px 0 #fafafabb, 1px 1px 0 #fafafabb;
-  }
-
-  .nodes [active],
-  .text [active] {
-    cursor: pointer;
-    fill: black !important;
-  }
-
-  .inactive {
-    opacity: 0.1;
-    transition: all 0.15s ease-out;
-  }
-
-  #graph-wrapper {
-    background: #fcfcfc;
-    border-style: solid;
-    border-width: 2px;
-    border-color: #8b88e6;
-    border-radius: 4px;
-    height: auto;
-  }
-</style>
-
 <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/5.16.0/d3.min.js"
   integrity="sha512-FHsFVKQ/T1KWJDGSbrUhTJyS1ph3eRrxI228ND0EGaEp6v4a/vGwPWd3Dtd/+9cI7ccofZvl/wulICEurHN1pg=="
   crossorigin="anonymous"></script>
 
+<div id="floating-buttons">
+  <div><i class="material-icons">insights</i></div>
+</div>
 <div id="graph-wrapper">
   <script>
-    const MINIMAL_NODE_SIZE = 8;
+    const MINIMAL_NODE_SIZE = 6;
     const MAX_NODE_SIZE = 12;
     const ACTIVE_RADIUS_FACTOR = 1.5;
     const STROKE = 1;
@@ -67,12 +31,8 @@
     const updateNodeSize = () => {
       nodesData.forEach((el) => {
         // flux를 계산하여 노드 크기 설정
-        let weight =
-          3 *
-          Math.sqrt(
-            linksData.filter((l) => l.source === el.id || l.target === el.id)
-              .length + 1
-          );
+        let weight = 3 * Math.sqrt(linksData.filter((l) => l.source.id === el.id || l.target.id === el.id).length + 1);
+        
         if (weight < MINIMAL_NODE_SIZE) {
           weight = MINIMAL_NODE_SIZE;
         } else if (weight > MAX_NODE_SIZE) {
@@ -173,11 +133,11 @@
     const element = document.createElementNS("http://www.w3.org/2000/svg", "svg");
     graphWrapper.appendChild(element);
     element.setAttribute("width", graphWrapper.clientWidth);
-    element.setAttribute("height", window.innerHeight * 0.8);
+    element.setAttribute("height", graphWrapper.clientHeight);
 
     const reportWindowSize = () => {
       element.setAttribute("width", graphWrapper.clientWidth);
-      element.setAttribute("height", window.innerHeight * 0.8);
+      element.setAttribute("height", graphWrapper.clientHeight);
     };
 
     window.addEventListener('resize', reportWindowSize);
@@ -186,6 +146,7 @@
     const width = Number(svg.attr("width"));
     const height = Number(svg.attr("height"));
     let zoomLevel = 1;
+    let currentX = 0, currentY = 0;
 
     const simulation = d3
       .forceSimulation(nodesData)
@@ -203,12 +164,13 @@
       .force("collision", d3.forceCollide().radius(80))
       .stop();
 
-    const g = svg.append("g");
+    const g = svg.append("g").attr("transform-origin", "center");
     let link = g.append("g").attr("class", "links").selectAll(".link");
     let node = g.append("g").attr("class", "nodes").selectAll(".node");
     let text = g.append("g").attr("class", "text").selectAll(".text");
 
-    const resize = () => {
+
+    const zoomOrDrag = () => {
       if (d3.event) {
         const scale = d3.event.transform;
         zoomLevel = scale.k;
@@ -220,32 +182,34 @@
       const font = Math.max(Math.round(zoomOrKeep(FONT_SIZE)), 1);
 
       text.attr("font-size", (d) => font);
-      text.attr("y", (d) => d.y - zoomOrKeep(FONT_BASELINE) + 8);
+      text.attr("y", (d) => d.y + currentY - zoomOrKeep(FONT_BASELINE) + 8);
       link.attr("stroke-width", zoomOrKeep(STROKE));
-      node.attr("r", (d) => {
-        return zoomOrKeep(nodeSize[d.id]);
-      });
-      svg
-        .selectAll("circle")
+      node.attr("r", (d) => zoomOrKeep(nodeSize[d.id]));
+      svg.selectAll("circle")
         .filter((_d, i, nodes) => d3.select(nodes[i]).attr("active"))
         .attr("r", (d) => zoomOrKeep(ACTIVE_RADIUS_FACTOR * nodeSize[d.id]));
 
       // document.getElementById("zoom").innerHTML = zoomLevel.toFixed(2);
     };
 
-    const ticked = () => {
-      node.attr("cx", (d) => d.x).attr("cy", (d) => d.y);
+    const renderSVG = () => {
+      d3.select(".nodes [active]").each((d) => {
+        currentX = width / 2 - d.x;
+        currentY = height / 2 - d.y;
+      });
+      node.attr("cx", (d) => d.x + currentX)
+        .attr("cy", (d) => d.y + currentY);
       text
-        .attr("x", (d) => d.x)
-        .attr("y", (d) => d.y - (FONT_BASELINE - nodeSize[d.id]) / zoomLevel);
+        .attr("x", (d) => d.x + currentX)
+        .attr("y", (d) => d.y + currentY - (FONT_BASELINE - nodeSize[d.id]) / zoomLevel)
       link
-        .attr("x1", (d) => d.source.x)
-        .attr("y1", (d) => d.source.y)
-        .attr("x2", (d) => d.target.x)
-        .attr("y2", (d) => d.target.y);
+        .attr("x1", (d) => d.source.x + currentX)
+        .attr("y1", (d) => d.source.y + currentY)
+        .attr("x2", (d) => d.target.x + currentX)
+        .attr("y2", (d) => d.target.y + currentY);
     };
     
-    const restart = () => {
+    const runSimulation = () => {
       updateNodeSize();
       node = node.data(nodesData, (d) => d.id);
       node.exit().remove();
@@ -301,13 +265,12 @@
         simulation.tick();
       }
 
-      ticked();
+      renderSVG();
     };
 
-    const zoomHandler = d3.zoom().scaleExtent([0.2, 3]).on("zoom", resize);
-
+    const zoomHandler = d3.zoom().scaleExtent([0.2, 3]).on("zoom", zoomOrDrag);
     zoomHandler(svg);
-    restart();
+    runSimulation()
 
     function isCurrentPath(notePath) {
       return window.location.pathname.includes(notePath)
@@ -325,5 +288,20 @@
     function parseJekyllDateToMiliseconds(string) {
       return Date.parse(string.replaceAll(/-/g, ' '))
     }
+
+  let showGraph = false;
+  const graphButton = document.getElementById('floating-buttons');
+  graphButton.addEventListener('click', () => {
+    showGraph = !showGraph;
+    graphWrapper.classList.toggle('active', showGraph);
+  });
+  document.addEventListener('click', (event) => {
+    const inGraphWrapper = event.composedPath().includes(graphWrapper)
+    const inGraphButton = event.composedPath().includes(graphButton)
+    if (!inGraphWrapper && !inGraphButton) {
+      showGraph = false;
+      graphWrapper.classList.toggle('active', showGraph);
+    }
+  })
   </script>
 </div>

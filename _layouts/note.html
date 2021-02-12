@@ -1,19 +1,6 @@
 ---
 layout: default
 ---
-<script>
-  window.onload = () => {
-    const side = document.getElementsByTagName('side')[0];
-    const observer = new IntersectionObserver((entries) => {
-      const ratio = entries[0].intersectionRatio;
-      const boundingRect = entries[0].boundingClientRect;
-      const intersectionRect = entries[0].intersectionRect;
-    }, {
-      root: document.getElementById('notes-entry-container')
-    });
-    observer.observe(side)
-  }
-</script>
 <article>
   <div>
     <h1>{{ page.title }}</h1>

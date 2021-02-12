@@ -1,8 +1,10 @@
 ---
 title: '뇌를 다치면 사람은 변한다'
 author: 'vlwkaos'
-published: false
+published: true
 ---
+
+나는 학부때 컴퓨터 전공외에 뇌인지융합전공 커리큘럼에서 신경과학을 공부했다. 우리뇌는 확실히 영역마다 각자 담당하는 기능이 있는데...
 
 - aphantasia
 - 자신을 다른 사람으로 인식하는 병
