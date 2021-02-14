@@ -17,7 +17,6 @@ $font-family: RIDIBatang, -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica
   sans-serif, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol;
 
 body {
-  max-width: 1024px; 
   box-sizing: content-box;
   font-family: $font-family;
   margin: 0 auto;
@@ -32,9 +31,6 @@ body {
     font-size: 1.2rem;
   }
   
-  .disable-scroll {
-    overflow: hidden;
-  }
 }
 
 time {
@@ -245,31 +241,9 @@ code {
 }
 
 #graph-wrapper {
-  transition: opacity 0.5s, transform 0.6s;
-  opacity: 0.0;
-  position: fixed;
-  left: 50%;
-  top: 50%;
-  width: 60vw;
-  height: 85vh;
-  transform: translate(-50%, -50%) scale(0.1);
   background: #fcfcfc;
-  border-style: solid;
-  border-width: 1px;
-  border-color: $color-primary;
   border-radius: 4px;
-  z-index: 2;
-  filter: drop-shadow(0 0 0.1rem $color-primary);
-  
-  &.active {
-    opacity: 1.0;
-    transform: translate(-50%, -50%) scale(1);
-  }
-  
-  @media (max-width: 768px) {
-    width: 95vw;
-    height: 80vh;
-  }
+  height:auto;
   
   .links line {
     stroke: #ccc;
