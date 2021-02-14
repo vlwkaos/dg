@@ -4,7 +4,10 @@
 
 <div id="floating-buttons">
   <div><i class="material-icons">insights</i></div>
+  <div><i class="material-icons">close</i></div>
 </div>
+
+<div id="modal">
 <div id="graph-wrapper">
   <script>
     const MINIMAL_NODE_SIZE = 6;
@@ -12,7 +15,7 @@
     const ACTIVE_RADIUS_FACTOR = 1.5;
     const STROKE = 1;
     const FONT_SIZE = 16;
-    const TICKS = 200;
+    const TICKS = 300;
     const FONT_BASELINE = 40;
     const MAX_LABEL_LENGTH = 50;
 
@@ -268,7 +271,7 @@
       renderSVG();
     };
 
-    const zoomHandler = d3.zoom().scaleExtent([0.2, 3]).on("zoom", zoomOrDrag);
+    const zoomHandler = d3.zoom().scaleExtent([0.2, 1]).on("zoom", zoomOrDrag);
     zoomHandler(svg);
     runSimulation()
 
@@ -290,18 +293,22 @@
     }
 
   let showGraph = false;
+  const modal = document.getElementById('modal');
   const graphButton = document.getElementById('floating-buttons');
   graphButton.addEventListener('click', () => {
     showGraph = !showGraph;
-    graphWrapper.classList.toggle('active', showGraph);
+    modal.classList.toggle('active', showGraph);
+    graphButton.classList.toggle('active', showGraph);
   });
   document.addEventListener('click', (event) => {
-    const inGraphWrapper = event.composedPath().includes(graphWrapper)
+    const inModal = event.composedPath().includes(graphWrapper)
     const inGraphButton = event.composedPath().includes(graphButton)
-    if (!inGraphWrapper && !inGraphButton) {
+    if (!inModal && !inGraphButton) {
       showGraph = false;
-      graphWrapper.classList.toggle('active', showGraph);
+      modal.classList.toggle('active', showGraph);
+      graphButton.classList.toggle('active', showGraph);
     }
   })
   </script>
+</div>
 </div>
