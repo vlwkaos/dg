@@ -1,5 +1,6 @@
 # Generated website directory
 _site/
+_private/
 
 # Sass cache
 .sass-cache/

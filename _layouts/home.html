@@ -5,3 +5,34 @@ layout: default
 <content>
   {{ content }}
 </content>
+<br>
+<br>
+<div>
+  <h3>최근 업데이트 순</h2>
+  <ul id="latest-notes">
+    
+  </ul>
+</div>
+
+
+<script>
+  const graphDataHome = {% include notes_graph.json %}
+  let sortedByNew = graphDataHome.nodes.sort((a,b) => parseJekyllDateToMiliseconds(a.last_modified) < parseJekyllDateToMiliseconds(b.last_modified))
+  const llist = document.getElementById('latest-notes');
+  for (let i=0; i< sortedByNew.length; i++) {
+    const li = document.createElement('li');
+    const a = document.createElement('a');
+    a.classList.add('internal-link')
+    a.href = sortedByNew[i].path;
+    a.innerText = sortedByNew[i].label;
+    li.appendChild(a);
+    llist.appendChild(li)
+  } 
+  function dayToMiliseconds(days) {
+    return days * 24 * 60 * 60 * 1000;
+  }
+  
+  function parseJekyllDateToMiliseconds(string) {
+    return Date.parse(string.replaceAll(/-/g, ' '))
+  }
+</script>

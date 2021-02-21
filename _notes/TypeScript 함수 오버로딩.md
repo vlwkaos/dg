@@ -1,7 +1,7 @@
 ---
 title: 'TypeScript 함수 오버로딩'
 author: 'vlwkaos'
-created: '2021-01-25'
+created: '2021-01-15:00:16:15'
 published: true
 ---
 

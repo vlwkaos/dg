@@ -269,7 +269,7 @@ code {
   will-change:  transform;
   
   &.active {
-    transform: none;   
+    transform: translate3D(0,0,0);   
   }
 }
 
@@ -279,6 +279,8 @@ code {
   background: #fcfcfc;
   border: $color-primary 1px solid;
   border-radius: 4px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
   
   @media (max-width: 768px) {
     height: 100vh;
@@ -297,10 +299,10 @@ code {
   }
 
   .text text {
-    cursor: pointer;
+    cursor: default;
     fill: #333;
     text-shadow: -1px -1px 0 #fafafabb, 1px -1px 0 #fafafabb, -1px 1px 0 #fafafabb, 1px 1px 0 #fafafabb;
-    transition: all 0.3s ease-out;
+    // transition: all 0.3s ease-out;
   }
 
   .nodes [active],

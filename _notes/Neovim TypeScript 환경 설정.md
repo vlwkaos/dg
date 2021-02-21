@@ -1,6 +1,7 @@
 ---
-title: 'Neovim Typescript 환경 설정'
+title: 'Neovim TypeScript 환경 설정'
 author: 'vlwkaos'
+created: '2021-02-22:00:16:20'
 published: true
 ---
 
@@ -103,7 +104,7 @@ VSCode에 있는 Typescript 관련 기능 설정은 `:CocConfig`을 입력하면
 `vim-gitgutter` 플러그인을 사용해서 로컬 변경점(hunk)을 바로 확인하고 stage, revert할 수 있다.
 
 <p align='center'>
-<img src='/assets/neovim_gitgutter.png'/>
+<img src='/attachments/neovim_gitgutter.png'/>
 <br><span>로컬 변경점이 + / - 로 표시된다.</span></p>
 
 - `]c`, `[c` 로 이전/ 다음 변경점을 탐색할 수 있다.
@@ -144,7 +145,6 @@ Neovim 내에서 테스트 파일을 열고 `:TestFile` 실행.
 - 맥OS의 Option키는 자체 기호 입력에 쓰이기 때문에 터미널에서 제대로 입력되지 않는다. 
   
   `iterm2`를 사용한다면 키설정에서 Option키를 `+ESC`를 반환하도록 할 수가 있는데, 이렇게 하고나서 터미널에서 `Ctrl + v`를 입력후 키조합을 입력해보면 어떤식으로 입력이 일어나는지 알 수 있다. 예를 들자면 `Ctrl + v` 하고나서 `Option + l`을 입력하면 아마 `^[l`이렇게 입력될 것이다. 이걸 Vim파일 키 매핑시에 사용하면 잘 작동한다. 참고로 `^[`는 `ESC`와 동일하다 (아까 설정한대로)
-
 
 ---
 

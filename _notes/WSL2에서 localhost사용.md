@@ -1,6 +1,7 @@
 ---
 title: 'WSL2에서 localhost사용'
 author: 'vlwkaos'
+created: '2020-11-15:00:16:15'
 published: true
 ---
 
@@ -61,7 +62,7 @@ foreach($hostname in $hostnames) {
 - 윈도우 이벤트 뷰어를 열고 (검색 > 이벤트 뷰어) WSL2 실행시 발생하는 네트워크 관련 이벤트를 찾아준다.
 
 <p align='center'>
-<img src='/assets/wsl2_localhost.png'/>
+<img src='/attachments/wsl2_localhost.png'/>
 <br><span>이벤트 뷰어</span></p>
 
 - 해당 이벤트를 우클릭하면 '이 이벤트에 작업연결'이라는 항목이 있는데 클릭한다. 

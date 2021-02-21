@@ -1,7 +1,7 @@
 ---
 title: 'TypeScript'
 author: 'vlwkaos'
-created: '2021-01-25'
+created: '2021-01-25:00:16:16'
 published: true
 ---
 
