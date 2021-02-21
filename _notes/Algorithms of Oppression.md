@@ -4,7 +4,7 @@ author: 'vlwkaos'
 excerpt: '알고리즘이 가져다주는 차별 문제를 알아보자'
 tags: [ethics, technology]
 image: /attachments/algocover.jpeg
-created: '2021-02-22:00:16:31'
+created: '2019-09-22:00:16:31'
 published: true
 ---
 ![]({{page.image}})
