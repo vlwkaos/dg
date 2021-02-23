@@ -118,13 +118,13 @@
           .distance(80)
       )
       .force("center", d3.forceCenter(width / 2, height / 2))
-      .force("collision", d3.forceCollide().radius(50))
+      // .force("collision", d3.forceCollide().radius(50))
       .stop();
 
     const g = svg.append("g").attr("transform-origin", "center");
     let link = g.append("g").attr("class", "links").selectAll(".link");
-    let node = g.append("g").attr("class", "nodes").selectAll(".node");
     let text = g.append("g").attr("class", "text").selectAll(".text");
+    let node = g.append("g").attr("class", "nodes").selectAll(".node");
 
 
     const zoomOrDrag = () => {
