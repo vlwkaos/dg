@@ -10,6 +10,6 @@ TypeScript(이하 TS)는 JavaScript(이하 JS)에 여러 타입 기능을 붙여
 안타깝게도, 내가 지금(2021.01.25) 일하는 회사는 TS의 장점을 잘 살린 코딩을 지향하지는 않는다. 고전적인 MVC 구조를 활용한 Java 같은 코드를 지향한다. 문제는 TS의 태생이 JS이다 보니 Java의 OOP의 개념을 그대로 구현하기 어렵다는 점이다. 또한 JS를 잘 모르는 상태에서 일반적인 고급 프로그래밍 언어처럼 코드를 작성한다면 여러 문제를 마주할 것이다. 👇
 
 - [[TypeScript 함수 오버로딩]] 
-- [[TypeScript JSON을 class instance로 변환하기]]
+- [[TypeScript JSON을 Class Instance로 변환하기]]
 - [[TypeScript 순환참조 문제]]
 
